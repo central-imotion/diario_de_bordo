@@ -450,7 +450,14 @@ export function renderDiaryHTML(data) {
 export async function copyDiaryToClipboard(element) {
   if (!element) return;
 
-  const htmlContent = element.innerHTML;
+  // Clonar para remover os detalhes do pensamento antes de copiar
+  const clone = element.cloneNode(true);
+  const thinking = clone.querySelector('.thinking-details');
+  if (thinking) {
+    thinking.remove();
+  }
+
+  const htmlContent = clone.innerHTML;
   const styledHTML = buildStyledHTML(htmlContent);
 
   try {
@@ -476,8 +483,43 @@ export async function copyDiaryToClipboard(element) {
   }
 }
 
+function getTagColor(tagText) {
+  const clean = tagText.replace(/[\[\]]/g, '').toLowerCase().trim();
+  if (clean.includes('rev-pj') || clean.includes('meta ads') || clean.includes('google ads')) {
+    return '#2563eb'; // Blue
+  }
+  if (clean.includes('agro')) {
+    return '#f59e0b'; // Yellow/Orange
+  }
+  if (clean.includes('prev')) {
+    return '#7c3aed'; // Purple
+  }
+  if (clean.includes('branding')) {
+    return '#db2777'; // Pink
+  }
+  return '#2563eb'; // Default to blue
+}
+
 function buildStyledHTML(innerHTML) {
+  let styled = innerHTML;
+  
+  // Convert action classes to inline styles for pasting
+  styled = styled.replace(/class="action-positive"/gi, 'style="color: #16a34a; font-weight: bold;"');
+  styled = styled.replace(/class="action-negative"/gi, 'style="color: #ea4335; font-weight: bold;"');
+  styled = styled.replace(/class="action-neutral"/gi, 'style="color: #f59e0b; font-weight: bold;"');
+  
+  // Convert tag classes to inline styles for pasting
+  styled = styled.replace(/class="tag-highlight tag-blue"/gi, 'style="color: #2563eb; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-yellow"/gi, 'style="color: #f59e0b; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-purple"/gi, 'style="color: #7c3aed; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-pink"/gi, 'style="color: #db2777; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-default"/gi, 'style="color: #2563eb; font-weight: bold;"');
+  
+  // Handle any tag-highlight classes that might not have a specific color class
+  styled = styled.replace(/class="tag-highlight" style="([^"]*)"/gi, 'style="color: #2563eb; font-weight: bold; $1"');
+  styled = styled.replace(/class="tag-highlight"/gi, 'style="color: #2563eb; font-weight: bold;"');
+
   const prefix = `<meta charset="utf-8"><div style="font-family: Arial, sans-serif; font-size: 11pt; color: #000000;">`;
   const suffix = `</div>`;
-  return prefix + innerHTML + suffix;
+  return prefix + styled + suffix;
 }
