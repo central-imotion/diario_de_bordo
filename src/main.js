@@ -3,8 +3,12 @@
    ============================================ */
 
 import { analyzeImages } from './ai-service.js';
-import { renderDiaryHTML, copyDiaryToClipboard } from './editor.js';
+import { copyDiaryToClipboard } from './editor.js';
 
+
+// --- Configuração ---
+// Escolha o modelo padrão para a análise: 'gemini' ou 'claude'
+const ACTIVE_MODEL = 'claude';
 
 // --- State ---
 let antesFiles = [];
@@ -201,6 +205,13 @@ async function handleSend() {
   messageInput.style.height = 'auto';
   antesFiles = [];
   depoisFiles = [];
+
+  // Reset paste target selector to "antes"
+  const antesRadio = document.querySelector('input[name="pasteTarget"][value="antes"]');
+  if (antesRadio) {
+    antesRadio.checked = true;
+  }
+
   renderPreviews();
   updateSendButton();
 
@@ -385,14 +396,16 @@ async function processWithAI(text, imagesObj) {
 
   try {
     const statusSpan = document.querySelector('#loading-message .message-loading span:last-child');
+    const selectedModel = ACTIVE_MODEL;
     
     // Passar callback de progresso para a UI do chatbot
-    const result = await analyzeImages(imagesObj, text, (msg) => {
+    const resultText = await analyzeImages(imagesObj, text, selectedModel, (msg) => {
       if (statusSpan) statusSpan.textContent = msg;
     });
     
     removeLoadingMessage();
-    const diaryHTML = renderDiaryHTML(result);
+    // Converter markdown para HTML
+    const diaryHTML = markdownToHTML(resultText);
     addAIMessage(diaryHTML);
   } catch (error) {
     removeLoadingMessage();
@@ -412,6 +425,13 @@ function handleNewChat() {
   welcomeScreen.classList.remove('hidden');
   antesFiles = [];
   depoisFiles = [];
+  
+  // Reset paste target selector to "antes"
+  const antesRadio = document.querySelector('input[name="pasteTarget"][value="antes"]');
+  if (antesRadio) {
+    antesRadio.checked = true;
+  }
+  
   renderPreviews();
   messageInput.value = '';
   updateSendButton();
@@ -428,6 +448,183 @@ function escapeHTML(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
+}
+
+/**
+ * Conversor leve de Markdown → HTML para o output do Diário de Bordo.
+ * Suporta: headings (####), bold (**), underline (<u>), listas (*), paragraphs.
+ */
+function markdownToHTML(md) {
+  if (!md) return '<p>Nenhum conteúdo gerado.</p>';
+
+  let thinkingHTML = '';
+  let cleanMd = md;
+
+  // Extrair tag <pensamento> ou <thinking>
+  const thinkingMatch = md.match(/<(pensamento|thinking)>([\s\S]*?)<\/\1>/i);
+  if (thinkingMatch) {
+    const thinkingContent = thinkingMatch[2].trim();
+    thinkingHTML = `
+      <details class="thinking-details" style="margin-bottom: var(--space-md); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-md); background: rgba(79, 143, 247, 0.03); border-left: 4px solid var(--accent);">
+        <summary style="cursor: pointer; font-weight: 600; color: var(--text-secondary); font-size: var(--font-size-sm); outline: none; user-select: none;">
+          🔍 Raciocínio de Comparação e União (Clique para expandir)
+        </summary>
+        <div style="margin-top: var(--space-sm); font-size: var(--font-size-sm); color: var(--text-secondary); line-height: 1.6; white-space: pre-wrap; font-family: var(--font-family);">${escapeHTML(thinkingContent)}</div>
+      </details>
+    `;
+    cleanMd = md.replace(/<(pensamento|thinking)>[\s\S]*?<\/\1>/i, '').trim();
+  }
+
+  // Processar linhas
+  const lines = cleanMd.split('\n');
+  const outputLines = [];
+  let inList = false;
+  let listIndent = 0;
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
+    const trimmed = line.trim();
+
+    // Heading ####
+    if (trimmed.startsWith('#### ')) {
+      if (inList) { outputLines.push('</ul>'); inList = false; }
+      const content = trimmed.substring(5);
+      outputLines.push(`<h4>${processInline(content)}</h4>`);
+      continue;
+    }
+
+    // Heading ###
+    if (trimmed.startsWith('### ')) {
+      if (inList) { outputLines.push('</ul>'); inList = false; }
+      const content = trimmed.substring(4);
+      outputLines.push(`<h3>${processInline(content)}</h3>`);
+      continue;
+    }
+
+    // List item (top level): *   text
+    if (trimmed.startsWith('* ') || trimmed.startsWith('*\t')) {
+      const content = trimmed.substring(trimmed.indexOf(' ') + 1).trim();
+
+      // Se entramos numa lista de nível superior e tínhamos sublista aberta, fechar
+      if (inList && listIndent > 0) {
+        outputLines.push('</ul>');
+        listIndent = 0;
+      }
+
+      if (!inList) {
+        outputLines.push('<ul>');
+        inList = true;
+        listIndent = 0;
+      }
+      outputLines.push(`<li>${processInline(content)}</li>`);
+      continue;
+    }
+
+    // Sub-list item (indented): starts with spaces/tabs then *
+    const subMatch = trimmed.match(/^\*\s+(.*)/);
+    const indentLevel = line.length - line.trimStart().length;
+    if (subMatch && indentLevel >= 4) {
+      if (!inList) {
+        outputLines.push('<ul>');
+        inList = true;
+      }
+      if (listIndent === 0) {
+        outputLines.push('<ul>');
+        listIndent = 1;
+      }
+      outputLines.push(`<li>${processInline(subMatch[1])}</li>`);
+      continue;
+    }
+
+    // Linha em branco
+    if (trimmed === '') {
+      if (inList && listIndent > 0) {
+        outputLines.push('</ul>');
+        listIndent = 0;
+      }
+      if (inList) {
+        outputLines.push('</ul>');
+        inList = false;
+      }
+      continue;
+    }
+
+    // Horizontal rule
+    if (trimmed === '---' || trimmed === '***' || trimmed === '* * *') {
+      if (inList) { outputLines.push('</ul>'); inList = false; }
+      outputLines.push('<hr>');
+      continue;
+    }
+
+    // Texto normal
+    if (inList && listIndent > 0) {
+      outputLines.push('</ul>');
+      listIndent = 0;
+    }
+    if (inList) {
+      outputLines.push('</ul>');
+      inList = false;
+    }
+    outputLines.push(`<p>${processInline(trimmed)}</p>`);
+  }
+
+  // Fechar listas abertas
+  if (listIndent > 0) outputLines.push('</ul>');
+  if (inList) outputLines.push('</ul>');
+
+  return thinkingHTML + outputLines.join('\n');
+}
+
+function getTagClass(tagName) {
+  const name = tagName.toLowerCase().trim();
+  if (name.includes('rev-pj') || name.includes('meta ads') || name.includes('google ads')) {
+    return 'tag-blue';
+  }
+  if (name.includes('agro')) {
+    return 'tag-yellow';
+  }
+  if (name.includes('prev')) {
+    return 'tag-purple';
+  }
+  if (name.includes('branding')) {
+    return 'tag-pink';
+  }
+  return 'tag-blue'; // Default to blue in KDG
+}
+
+/**
+ * Processa formatação inline: **bold**, <u>underline</u>
+ */
+function processInline(text) {
+  // 1. Colorir tags entre colchetes fora ou dentro de bold (ex: [REV-PJ], [Meta Ads], etc.), exceto [MANUAL]
+  text = text.replace(/\[(?!MANUAL\b)([^\]]+)\]/gi, (match, p1) => {
+    const cls = getTagClass(p1);
+    return `<span class="tag-highlight ${cls}">[${p1}]</span>`;
+  });
+
+  // 2. Bold: **text** com classes semânticas baseadas em ações
+  text = text.replace(/\*\*([^*]+)\*\*/g, (match, p1) => {
+    const clean = p1.trim();
+    
+    // Verbos de adição/criação -> Verde (positive)
+    if (/^(adicionamos|adicionado|adicionada|adicionou|iniciamos|iniciado|iniciada|iniciou|reativamos|reativado|reativada|reativou|aumentamos|aumentou|aumento|criamos|criado|criada|criou)$/i.test(clean)) {
+      return `<strong class="action-positive">${p1}</strong>`;
+    }
+    
+    // Verbos de pausa/remoção -> Vermelho (negative)
+    if (/^(pausamos|pausado|pausada|pausou|pausa|pausar|removemos|removido|removida|removeu)$/i.test(clean)) {
+      return `<strong class="action-negative">${p1}</strong>`;
+    }
+    
+    // Verbos de alteração/redução -> Laranja/Amarelo (neutral)
+    if (/^(alteramos|alterado|alterada|alterou|alteração|alteracao|reduzimos|reduzido|reduzida|reduziu|redução|reducao)$/i.test(clean)) {
+      return `<strong class="action-neutral">${p1}</strong>`;
+    }
+    
+    return `<strong>${p1}</strong>`;
+  });
+
+  return text;
 }
 
 // --- Boot ---

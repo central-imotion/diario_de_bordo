@@ -113,19 +113,19 @@ function fmtVerbaDe(antes, depois) {
  * }
  */
 
-function renderAlteracao(alt, acao) {
+function renderAlteracao(alt, acao, omitCampaignPrefix = false) {
   // --- Texto livre (fallback) ---
   if (alt.tipo === 'texto_livre' || alt.texto_livre) {
-    const tag = alt.tag_campanha ? `<strong style="color: ${TAG_COLOR};">${alt.tag_campanha}</strong> ` : '';
-    const plat = alt.plataforma ? `<span style="color: ${TAG_COLOR};">[${alt.plataforma}]</span> ` : '';
+    const tag = (!omitCampaignPrefix && alt.tag_campanha) ? `<strong style="color: ${TAG_COLOR};">${alt.tag_campanha}</strong> ` : '';
+    const plat = (!omitCampaignPrefix && alt.plataforma) ? `<span style="color: ${TAG_COLOR};">[${alt.plataforma}]</span> ` : '';
     return `<li style="margin-bottom: 6px;"><p>${tag}${plat}${alt.texto_livre || ''}</p></li>`;
   }
 
-  // --- Prefixo: TAG + Plataforma ---
-  const tag = alt.tag_campanha
+  // --- Prefixo: TAG + Plataforma (omitido quando agrupado sob header de campanha) ---
+  const tag = (!omitCampaignPrefix && alt.tag_campanha)
     ? `<strong style="color: ${TAG_COLOR};">${alt.tag_campanha}</strong> `
     : '';
-  const plat = alt.plataforma
+  const plat = (!omitCampaignPrefix && alt.plataforma)
     ? `<span style="color: ${TAG_COLOR};">[${alt.plataforma}]</span> `
     : '';
 
@@ -133,15 +133,16 @@ function renderAlteracao(alt, acao) {
     return `<li style="margin-bottom: 6px;"><p>${tag}${plat}</p></li>`;
   }
 
-  // Contexto de campanha (ex: "Na campanha de formulário, ")
+  // Contexto de campanha (ex: "Na campanha de formulário, ") — omitido quando agrupado
   const tipoCampNorm = normalizeTipoCampanha(alt.tipo_campanha);
-  const tipoCamp = tipoCampNorm
+  const tipoCamp = (!omitCampaignPrefix && tipoCampNorm)
     ? `Na campanha de <u>${tipoCampNorm}</u>, `
     : '';
 
   // Contexto de público (ex: "no público [MANUAL] Advantage, ")
+  // Capitaliza "No" quando inicia a frase (tipoCamp omitido)
   const pubCtx = alt.publico
-    ? `no público <strong>${alt.publico},</strong> `
+    ? `${tipoCamp ? 'n' : 'N'}o público <strong>${alt.publico},</strong> `
     : '';
 
   let body = '';
@@ -187,7 +188,11 @@ function renderAlteracao(alt, acao) {
 
   switch (acao.escopo) {
     case 'campanha': {
-      body = `${tipoCamp ? '' : ''}${verboStyled} por completo a campanha de <u>${tipoCampNorm || 'mensagem'}</u>`;
+      if (omitCampaignPrefix) {
+        body = `${verboStyled} por completo`;
+      } else {
+        body = `${verboStyled} por completo a campanha de <u>${tipoCampNorm || 'mensagem'}</u>`;
+      }
       break;
     }
     case 'publico': {
@@ -387,20 +392,45 @@ export function renderDiaryHTML(data) {
   // --- Header "Alterações:" ---
   html += `<p style="margin-bottom: 8px;"><strong><u>Alterações</u>:</strong></p>`;
 
-  // --- Lista de alterações ---
+  // --- Lista de alterações (agrupadas por campanha) ---
   if (data.alteracoes && data.alteracoes.length > 0) {
-    html += '<ul style="margin-top: 4px; padding-left: 20px;">';
+    // Agrupar alterações por chave de campanha (tag + plataforma + tipo)
+    const campaignGroups = new Map();
     data.alteracoes.forEach(alt => {
-      if (alt.tipo === 'texto_livre' || alt.texto_livre) {
-        html += renderAlteracao(alt, null);
-      } else if (alt.acoes && alt.acoes.length > 0) {
-        alt.acoes.forEach(acao => {
-          html += renderAlteracao(alt, acao);
-        });
-      } else {
-        html += renderAlteracao(alt, null);
+      const tNorm = normalizeTipoCampanha(alt.tipo_campanha);
+      const key = `${alt.tag_campanha || ''}||${alt.plataforma || ''}||${tNorm || ''}`;
+      if (!campaignGroups.has(key)) {
+        campaignGroups.set(key, { tag: alt.tag_campanha, plataforma: alt.plataforma, tipoCampanha: tNorm, items: [] });
       }
+      campaignGroups.get(key).items.push(alt);
     });
+
+    html += '<ul style="margin-top: 4px; padding-left: 20px;">';
+
+    campaignGroups.forEach(group => {
+      // Header da campanha (ex: "[REV-PJ] [Meta Ads] Na campanha de formulário:")
+      const tagH = group.tag ? `<strong style="color: ${TAG_COLOR};">${group.tag}</strong> ` : '';
+      const platH = group.plataforma ? `<span style="color: ${TAG_COLOR};">[${group.plataforma}]</span> ` : '';
+      const tipoH = group.tipoCampanha ? `Na campanha de <u>${group.tipoCampanha}</u>` : '';
+
+      html += `<li style="margin-bottom: 8px;"><p>${tagH}${platH}${tipoH}:</p>`;
+      html += '<ul style="margin-top: 4px;">';
+
+      group.items.forEach(alt => {
+        if (alt.tipo === 'texto_livre' || alt.texto_livre) {
+          html += renderAlteracao(alt, null, true);
+        } else if (alt.acoes && alt.acoes.length > 0) {
+          alt.acoes.forEach(acao => {
+            html += renderAlteracao(alt, acao, true);
+          });
+        } else {
+          html += renderAlteracao(alt, null, true);
+        }
+      });
+
+      html += '</ul></li>';
+    });
+
     html += '</ul>';
   }
 
@@ -420,7 +450,14 @@ export function renderDiaryHTML(data) {
 export async function copyDiaryToClipboard(element) {
   if (!element) return;
 
-  const htmlContent = element.innerHTML;
+  // Clonar para remover os detalhes do pensamento antes de copiar
+  const clone = element.cloneNode(true);
+  const thinking = clone.querySelector('.thinking-details');
+  if (thinking) {
+    thinking.remove();
+  }
+
+  const htmlContent = clone.innerHTML;
   const styledHTML = buildStyledHTML(htmlContent);
 
   try {
@@ -446,8 +483,43 @@ export async function copyDiaryToClipboard(element) {
   }
 }
 
+function getTagColor(tagText) {
+  const clean = tagText.replace(/[\[\]]/g, '').toLowerCase().trim();
+  if (clean.includes('rev-pj') || clean.includes('meta ads') || clean.includes('google ads')) {
+    return '#2563eb'; // Blue
+  }
+  if (clean.includes('agro')) {
+    return '#f59e0b'; // Yellow/Orange
+  }
+  if (clean.includes('prev')) {
+    return '#7c3aed'; // Purple
+  }
+  if (clean.includes('branding')) {
+    return '#db2777'; // Pink
+  }
+  return '#2563eb'; // Default to blue
+}
+
 function buildStyledHTML(innerHTML) {
+  let styled = innerHTML;
+  
+  // Convert action classes to inline styles for pasting
+  styled = styled.replace(/class="action-positive"/gi, 'style="color: #16a34a; font-weight: bold;"');
+  styled = styled.replace(/class="action-negative"/gi, 'style="color: #ea4335; font-weight: bold;"');
+  styled = styled.replace(/class="action-neutral"/gi, 'style="color: #f59e0b; font-weight: bold;"');
+  
+  // Convert tag classes to inline styles for pasting
+  styled = styled.replace(/class="tag-highlight tag-blue"/gi, 'style="color: #2563eb; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-yellow"/gi, 'style="color: #f59e0b; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-purple"/gi, 'style="color: #7c3aed; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-pink"/gi, 'style="color: #db2777; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-default"/gi, 'style="color: #2563eb; font-weight: bold;"');
+  
+  // Handle any tag-highlight classes that might not have a specific color class
+  styled = styled.replace(/class="tag-highlight" style="([^"]*)"/gi, 'style="color: #2563eb; font-weight: bold; $1"');
+  styled = styled.replace(/class="tag-highlight"/gi, 'style="color: #2563eb; font-weight: bold;"');
+
   const prefix = `<meta charset="utf-8"><div style="font-family: Arial, sans-serif; font-size: 11pt; color: #000000;">`;
   const suffix = `</div>`;
-  return prefix + innerHTML + suffix;
+  return prefix + styled + suffix;
 }
