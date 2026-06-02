@@ -34,7 +34,7 @@
   /* Semantic Colors — for Diary Output */
   --color-positive: #30a14e;
   --color-negative: #d1242f;
-  --color-neutral: #4f8ff7;
+  --color-neutral: #f59e0b;
 
   /* Borders */
   --border-default: #2a2f3e;
@@ -496,6 +496,30 @@ html, body {
   font-weight: 600;
 }
 
+.diary-content .tag-highlight {
+  font-weight: 600;
+}
+
+.diary-content .tag-highlight.tag-blue {
+  color: var(--accent);
+}
+
+.diary-content .tag-highlight.tag-yellow {
+  color: var(--color-neutral);
+}
+
+.diary-content .tag-highlight.tag-purple {
+  color: #c084fc;
+}
+
+.diary-content .tag-highlight.tag-pink {
+  color: #f472b6;
+}
+
+.diary-content .tag-highlight.tag-default {
+  color: var(--accent);
+}
+
 /* --- Loading Indicator --- */
 .message-loading {
   display: flex;
@@ -776,6 +800,32 @@ html, body {
 /* --- Utility --- */
 .hidden {
   display: none !important;
+}
+
+/* --- Model Selector Dropdown --- */
+.model-select-dropdown {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-default);
+  color: var(--text-primary);
+  font-family: var(--font-family);
+  font-size: var(--font-size-xs);
+  font-weight: 500;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  outline: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-right: var(--space-xs);
+}
+
+.model-select-dropdown:hover {
+  border-color: var(--border-hover);
+  background: var(--bg-hover);
+}
+
+.model-select-dropdown:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px var(--accent-glow);
 }
 
 /* --- Responsive --- */
