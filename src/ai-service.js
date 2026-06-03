@@ -284,7 +284,8 @@ Responda APENAS com a extração textual estruturada. Não gere o diário final 
         headers: {
           'content-type': 'application/json',
           'x-api-key': anthropicKey,
-          'anthropic-version': '2023-06-01'
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-6',
@@ -343,7 +344,8 @@ Responda APENAS com a extração textual estruturada. Não gere o diário final 
         headers: {
           'content-type': 'application/json',
           'x-api-key': anthropicKey,
-          'anthropic-version': '2023-06-01'
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-6',
@@ -392,7 +394,8 @@ Data da otimização: ${today}
         headers: {
           'content-type': 'application/json',
           'x-api-key': anthropicKey,
-          'anthropic-version': '2023-06-01'
+          'anthropic-version': '2023-06-01',
+          'anthropic-dangerous-direct-browser-access': 'true'
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-6',
