@@ -521,23 +521,6 @@ export async function copyDiaryToClipboard(element) {
   }
 }
 
-function getTagColor(tagText) {
-  const clean = tagText.replace(/[\[\]]/g, '').toLowerCase().trim();
-  if (clean.includes('rev-pj') || clean.includes('meta ads') || clean.includes('google ads')) {
-    return '#2563eb'; // Blue
-  }
-  if (clean.includes('agro')) {
-    return '#f59e0b'; // Yellow/Orange
-  }
-  if (clean.includes('prev')) {
-    return '#7c3aed'; // Purple
-  }
-  if (clean.includes('branding')) {
-    return '#db2777'; // Pink
-  }
-  return '#2563eb'; // Default to blue
-}
-
 function buildStyledHTML(innerHTML) {
   let styled = innerHTML;
   
