@@ -235,50 +235,159 @@ export async function analyzeImages(imagesObj, userText = '', model = 'gemini', 
       throw new Error('Chave API do Claude (VITE_ANTHROPIC_API_KEY) não encontrada no seu arquivo .env.');
     }
 
-    if (onProgress) onProgress('Analisando imagens com Claude Sonnet (Leitura Otimizada)...');
-
-    const claudeContent = [
-      {
-        type: 'text',
-        text: introText + "\n\n[IMPORTANTE]:\n1. Mantenha a etapa dentro da tag <pensamento> concisa (no máximo 40 linhas), listando as diferenças de forma objetiva, para garantir que todo o Diário de Bordo seja gerado no final sem truncar.\n2. Para extrair textos pequenos (como 'Lat. 3%'), cruze as fatias marcadas como Zoom Alta Resolução com as imagens de Visão Geral."
-      }
-    ];
-
-    // Adicionar fatias do ANTES
-    for (let i = 0; i < antes.length; i++) {
-      const slices = antesSlicesGroups[i];
-      for (const slice of slices) {
-        claudeContent.push({ type: 'text', text: `--- IMAGEM ANTES ${i + 1} - ${slice.label} ---` });
-        claudeContent.push({
-          type: 'image',
-          source: {
-            type: 'base64',
-            media_type: slice.mimeType,
-            data: slice.data
-          }
-        });
-      }
-    }
-
-    // Adicionar fatias do DEPOIS
-    for (let i = 0; i < depois.length; i++) {
-      const slices = depoisSlicesGroups[i];
-      for (const slice of slices) {
-        claudeContent.push({ type: 'text', text: `--- IMAGEM DEPOIS ${i + 1} - ${slice.label} ---` });
-        claudeContent.push({
-          type: 'image',
-          source: {
-            type: 'base64',
-            media_type: slice.mimeType,
-            data: slice.data
-          }
-        });
-      }
-    }
-
     try {
-      console.log('[AI-Service] Enviando requisição para o proxy local do Claude...');
-      const response = await fetch('/api/anthropic/v1/messages', {
+      // -------------------------------------------------------
+      // ESTRATÉGIA: Dividir em chamadas menores por quadrante
+      // 1. Fase 1 — Enviar ANTES (overview + fatias) sozinho
+      // 2. Fase 2 — Enviar DEPOIS (overview + fatias) sozinho
+      // 3. Fase 3 — Merge final: combinar as duas leituras
+      // -------------------------------------------------------
+
+      // === FASE 1: Leitura do ANTES ===
+      if (onProgress) onProgress('Fase 1/3 — Lendo estado ANTES...');
+      console.log('[AI-Service] Fase 1/3 — Enviando imagens ANTES para o Claude...');
+
+      const antesContent = [
+        {
+          type: 'text',
+          text: `Você é um extrator visual de campanhas de tráfego pago (Meta Ads / Google Ads).
+
+Analise as imagens a seguir, que representam o estado ANTES das otimizações de um mapa de campanhas.
+
+Para CADA campanha visível, extraia e liste de forma objetiva:
+- Nome/tag da campanha (ex: [REV-PJ], [AGRO], [PREV])
+- Plataforma (Meta Ads ou Google Ads)
+- Tipo da campanha (formulário, mensagem, conversão, etc.)
+- Lista de públicos e seus status (ativo/pausado)
+- Lista de anúncios dentro de cada público, com nome e verba (ex: AD 9 - Procura-se 500k, 40$/dia-útil)
+- Status de cada anúncio (ativo/pausado)
+
+Cruze as fatias de Zoom Alta Resolução com a Visão Geral para extrair nomes e valores corretamente.
+
+Responda APENAS com a extração textual estruturada. Não gere o diário final ainda.`
+        }
+      ];
+
+      for (let i = 0; i < antes.length; i++) {
+        const slices = antesSlicesGroups[i];
+        for (const slice of slices) {
+          antesContent.push({ type: 'text', text: `--- IMAGEM ANTES ${i + 1} - ${slice.label} ---` });
+          antesContent.push({
+            type: 'image',
+            source: { type: 'base64', media_type: slice.mimeType, data: slice.data }
+          });
+        }
+      }
+
+      const antesResponse = await fetch('/api/anthropic/v1/messages', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': anthropicKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 4096,
+          messages: [{ role: 'user', content: antesContent }]
+        })
+      });
+
+      if (!antesResponse.ok) {
+        const errorText = await antesResponse.text();
+        throw new Error(`Claude API error na Fase 1 - ANTES (${antesResponse.status}): ${errorText}`);
+      }
+
+      const antesData = await antesResponse.json();
+      const antesText = antesData.content?.[0]?.text || '';
+      console.log('[AI-Service] Fase 1/3 concluída. Extração ANTES:', antesText.length, 'chars');
+
+      // === FASE 2: Leitura do DEPOIS ===
+      if (onProgress) onProgress('Fase 2/3 — Lendo estado DEPOIS...');
+      console.log('[AI-Service] Fase 2/3 — Enviando imagens DEPOIS para o Claude...');
+
+      const depoisContent = [
+        {
+          type: 'text',
+          text: `Você é um extrator visual de campanhas de tráfego pago (Meta Ads / Google Ads).
+
+Analise as imagens a seguir, que representam o estado DEPOIS das otimizações de um mapa de campanhas.
+
+Para CADA campanha visível, extraia e liste de forma objetiva:
+- Nome/tag da campanha (ex: [REV-PJ], [AGRO], [PREV])
+- Plataforma (Meta Ads ou Google Ads)
+- Tipo da campanha (formulário, mensagem, conversão, etc.)
+- Lista de públicos e seus status (ativo/pausado)
+- Lista de anúncios dentro de cada público, com nome e verba (ex: AD 9 - Procura-se 500k, 40$/dia-útil)
+- Status de cada anúncio (ativo/pausado)
+
+Cruze as fatias de Zoom Alta Resolução com a Visão Geral para extrair nomes e valores corretamente.
+
+Responda APENAS com a extração textual estruturada. Não gere o diário final ainda.`
+        }
+      ];
+
+      for (let i = 0; i < depois.length; i++) {
+        const slices = depoisSlicesGroups[i];
+        for (const slice of slices) {
+          depoisContent.push({ type: 'text', text: `--- IMAGEM DEPOIS ${i + 1} - ${slice.label} ---` });
+          depoisContent.push({
+            type: 'image',
+            source: { type: 'base64', media_type: slice.mimeType, data: slice.data }
+          });
+        }
+      }
+
+      const depoisResponse = await fetch('/api/anthropic/v1/messages', {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          'x-api-key': anthropicKey,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-6',
+          max_tokens: 4096,
+          messages: [{ role: 'user', content: depoisContent }]
+        })
+      });
+
+      if (!depoisResponse.ok) {
+        const errorText = await depoisResponse.text();
+        throw new Error(`Claude API error na Fase 2 - DEPOIS (${depoisResponse.status}): ${errorText}`);
+      }
+
+      const depoisData = await depoisResponse.json();
+      const depoisText = depoisData.content?.[0]?.text || '';
+      console.log('[AI-Service] Fase 2/3 concluída. Extração DEPOIS:', depoisText.length, 'chars');
+
+      // === FASE 3: Merge final (texto puro, sem imagens) ===
+      if (onProgress) onProgress('Fase 3/3 — Gerando Diário de Bordo (merge final)...');
+      console.log('[AI-Service] Fase 3/3 — Merge final das extrações...');
+
+      const today = new Date().toLocaleDateString('pt-BR');
+      let mergePrompt = `Você recebeu duas extrações visuais de um mapa de campanhas de tráfego pago.
+
+=== EXTRAÇÃO DO ESTADO ANTES ===
+${antesText}
+
+=== EXTRAÇÃO DO ESTADO DEPOIS ===
+${depoisText}
+
+Data da otimização: ${today}
+`;
+
+      if (userText && userText.trim()) {
+        mergePrompt += `\n=== TEXTO DO GESTOR DE TRÁFEGO (VERDADE ABSOLUTA) ===\n${userText.trim()}\n\n[INSTRUÇÃO DE FUSÃO MANDATÓRIA]: O texto do gestor é a VERDADE ABSOLUTA e deve ser integrado com prioridade máxima. Você DEVE incluir no Diário de Bordo final todas as campanhas, públicos ou anúncios citados pelo gestor, mesmo que eles NÃO estejam visíveis nas extrações. Nenhuma informação fornecida pelo gestor pode ser descartada ou omitida!`;
+      }
+
+      mergePrompt += `\n\n[INSTRUÇÃO FINAL]: Compare as duas extrações (ANTES vs DEPOIS) e gere o Diário de Bordo completo das alterações no formato KDG.
+
+[IMPORTANTE]:
+1. Mantenha a etapa dentro da tag <pensamento> concisa (no máximo 40 linhas), listando as diferenças de forma objetiva, para garantir que todo o Diário de Bordo seja gerado no final sem truncar.
+2. O merge deve ser feito com base nas extrações textuais acima. Identifique pausas, adições, alterações de verba, etc.`;
+
+      const mergeResponse = await fetch('/api/anthropic/v1/messages', {
         method: 'POST',
         headers: {
           'content-type': 'application/json',
@@ -289,28 +398,23 @@ export async function analyzeImages(imagesObj, userText = '', model = 'gemini', 
           model: 'claude-sonnet-4-6',
           max_tokens: 4096,
           system: SYSTEM_PROMPT,
-          messages: [
-            {
-              role: 'user',
-              content: claudeContent
-            }
-          ]
+          messages: [{ role: 'user', content: mergePrompt }]
         })
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`Claude API error (${response.status}): ${errorText}`);
+      if (!mergeResponse.ok) {
+        const errorText = await mergeResponse.text();
+        throw new Error(`Claude API error na Fase 3 - Merge (${mergeResponse.status}): ${errorText}`);
       }
 
-      const data = await response.json();
-      const resultText = data.content?.[0]?.text || '';
+      const mergeData = await mergeResponse.json();
+      const resultText = mergeData.content?.[0]?.text || '';
 
       if (!resultText.trim()) {
-        throw new Error('Claude retornou um texto vazio.');
+        throw new Error('Claude retornou um texto vazio no merge final.');
       }
 
-      console.log('[AI-Service] Sucesso! Diário de Bordo gerado pelo Claude.');
+      console.log('[AI-Service] Sucesso! Diário de Bordo gerado pelo Claude (3 fases).');
       return resultText;
 
     } catch (e) {
