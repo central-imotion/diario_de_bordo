@@ -7,26 +7,50 @@
 // CORES POR TIPO DE AÇÃO (Padrão KDG)
 // =============================================
 const ACTION_COLORS = {
-  // Positivas (verde)
-  aumento: '#16a34a',
-  adicao: '#16a34a',
-  ativacao: '#16a34a',
-  criacao: '#16a34a',
-  reativacao: '#16a34a',
-  inicio: '#16a34a',
-  // Negativas (vermelho)
-  reducao: '#ea4335',
-  pausa: '#ea4335',
-  // Neutras (laranja)
-  alteracao: '#f59e0b',
-  isolamento: '#f59e0b',
-  transformacao: '#f59e0b',
+  // Positivas (verde) — KDG ClickUp green
+  aumento: '#18794e',
+  adicao: '#18794e',
+  ativacao: '#18794e',
+  criacao: '#18794e',
+  reativacao: '#18794e',
+  inicio: '#18794e',
+  // Negativas (vermelho) — KDG ClickUp red
+  reducao: '#f43932',
+  pausa: '#f43932',
+  // Neutras (laranja) — KDG ClickUp orange
+  alteracao: '#99543a',
+  isolamento: '#99543a',
+  transformacao: '#99543a',
 };
 
-const TAG_COLOR = '#2563eb'; // Azul para tags e plataformas
+function getTagColor(tagText) {
+  const clean = (tagText || '').replace(/[\[\]]/g, '').toLowerCase().trim();
+  // Campaign verticals — Blue (KDG ClickUp azureBlue1000)
+  if (clean === 'rev-pj' || clean === 'rd' || clean === 'se' || clean === 'lec') {
+    return '#0b68cb';
+  }
+  // Platforms — Blue
+  if (clean === 'meta ads' || clean === 'google ads') {
+    return '#0b68cb';
+  }
+  // AGRO — Yellow (KDG ClickUp yellow1000)
+  if (clean === 'agro') {
+    return '#915930';
+  }
+  // PREV — Purple (KDG ClickUp purple1000)
+  if (clean === 'prev') {
+    return '#5a43d6';
+  }
+  // Branding — Pink (KDG ClickUp pink800)
+  if (clean === 'branding') {
+    return '#e93d82';
+  }
+  // Unrecognized tags — no color
+  return null;
+}
 
 function getActionColor(tipo) {
-  return ACTION_COLORS[(tipo || '').toLowerCase()] || '#2563eb';
+  return ACTION_COLORS[(tipo || '').toLowerCase()] || '#0b68cb';
 }
 
 // =============================================
@@ -116,17 +140,25 @@ function fmtVerbaDe(antes, depois) {
 function renderAlteracao(alt, acao, omitCampaignPrefix = false) {
   // --- Texto livre (fallback) ---
   if (alt.tipo === 'texto_livre' || alt.texto_livre) {
-    const tag = (!omitCampaignPrefix && alt.tag_campanha) ? `<strong style="color: ${TAG_COLOR};">${alt.tag_campanha}</strong> ` : '';
-    const plat = (!omitCampaignPrefix && alt.plataforma) ? `<span style="color: ${TAG_COLOR};">[${alt.plataforma}]</span> ` : '';
+    const tagColor = getTagColor(alt.tag_campanha);
+    const tag = (!omitCampaignPrefix && alt.tag_campanha)
+      ? (tagColor ? `<strong style="color: ${tagColor};">${alt.tag_campanha}</strong> ` : `<strong>${alt.tag_campanha}</strong> `)
+      : '';
+    const platColor = getTagColor(alt.plataforma);
+    const plat = (!omitCampaignPrefix && alt.plataforma)
+      ? (platColor ? `<span style="color: ${platColor};">[${alt.plataforma}]</span> ` : `[${alt.plataforma}] `)
+      : '';
     return `<li style="margin-bottom: 6px;"><p>${tag}${plat}${alt.texto_livre || ''}</p></li>`;
   }
 
   // --- Prefixo: TAG + Plataforma (omitido quando agrupado sob header de campanha) ---
+  const tagColor = getTagColor(alt.tag_campanha);
   const tag = (!omitCampaignPrefix && alt.tag_campanha)
-    ? `<strong style="color: ${TAG_COLOR};">${alt.tag_campanha}</strong> `
+    ? (tagColor ? `<strong style="color: ${tagColor};">${alt.tag_campanha}</strong> ` : `<strong>${alt.tag_campanha}</strong> `)
     : '';
+  const platColor = getTagColor(alt.plataforma);
   const plat = (!omitCampaignPrefix && alt.plataforma)
-    ? `<span style="color: ${TAG_COLOR};">[${alt.plataforma}]</span> `
+    ? (platColor ? `<span style="color: ${platColor};">[${alt.plataforma}]</span> ` : `[${alt.plataforma}] `)
     : '';
 
   if (!acao) {
@@ -409,8 +441,14 @@ export function renderDiaryHTML(data) {
 
     campaignGroups.forEach(group => {
       // Header da campanha (ex: "[REV-PJ] [Meta Ads] Na campanha de formulário:")
-      const tagH = group.tag ? `<strong style="color: ${TAG_COLOR};">${group.tag}</strong> ` : '';
-      const platH = group.plataforma ? `<span style="color: ${TAG_COLOR};">[${group.plataforma}]</span> ` : '';
+      const tagColor = getTagColor(group.tag);
+      const tagH = group.tag
+        ? (tagColor ? `<strong style="color: ${tagColor};">${group.tag}</strong> ` : `<strong>${group.tag}</strong> `)
+        : '';
+      const platColor = getTagColor(group.plataforma);
+      const platH = group.plataforma
+        ? (platColor ? `<span style="color: ${platColor};">[${group.plataforma}]</span> ` : `[${group.plataforma}] `)
+        : '';
       const tipoH = group.tipoCampanha ? `Na campanha de <u>${group.tipoCampanha}</u>` : '';
 
       html += `<li style="margin-bottom: 8px;"><p>${tagH}${platH}${tipoH}:</p>`;
@@ -503,21 +541,21 @@ function getTagColor(tagText) {
 function buildStyledHTML(innerHTML) {
   let styled = innerHTML;
   
-  // Convert action classes to inline styles for pasting
-  styled = styled.replace(/class="action-positive"/gi, 'style="color: #16a34a; font-weight: bold;"');
-  styled = styled.replace(/class="action-negative"/gi, 'style="color: #ea4335; font-weight: bold;"');
-  styled = styled.replace(/class="action-neutral"/gi, 'style="color: #f59e0b; font-weight: bold;"');
+  // Convert action classes to inline styles for pasting (KDG ClickUp exact colors)
+  styled = styled.replace(/class="action-positive"/gi, 'style="color: #18794e; font-weight: bold;"');
+  styled = styled.replace(/class="action-negative"/gi, 'style="color: #f43932; font-weight: bold;"');
+  styled = styled.replace(/class="action-neutral"/gi, 'style="color: #99543a; font-weight: bold;"');
   
-  // Convert tag classes to inline styles for pasting
-  styled = styled.replace(/class="tag-highlight tag-blue"/gi, 'style="color: #2563eb; font-weight: bold;"');
-  styled = styled.replace(/class="tag-highlight tag-yellow"/gi, 'style="color: #f59e0b; font-weight: bold;"');
-  styled = styled.replace(/class="tag-highlight tag-purple"/gi, 'style="color: #7c3aed; font-weight: bold;"');
-  styled = styled.replace(/class="tag-highlight tag-pink"/gi, 'style="color: #db2777; font-weight: bold;"');
-  styled = styled.replace(/class="tag-highlight tag-default"/gi, 'style="color: #2563eb; font-weight: bold;"');
+  // Convert tag classes to inline styles for pasting (KDG ClickUp exact colors)
+  styled = styled.replace(/class="tag-highlight tag-blue"/gi, 'style="color: #0b68cb; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-yellow"/gi, 'style="color: #915930; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-purple"/gi, 'style="color: #5a43d6; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-pink"/gi, 'style="color: #e93d82; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-default"/gi, 'style="color: #0b68cb; font-weight: bold;"');
   
   // Handle any tag-highlight classes that might not have a specific color class
-  styled = styled.replace(/class="tag-highlight" style="([^"]*)"/gi, 'style="color: #2563eb; font-weight: bold; $1"');
-  styled = styled.replace(/class="tag-highlight"/gi, 'style="color: #2563eb; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight" style="([^"]*)"/gi, 'style="color: #0b68cb; font-weight: bold; $1"');
+  styled = styled.replace(/class="tag-highlight"/gi, 'style="color: #0b68cb; font-weight: bold;"');
 
   const prefix = `<meta charset="utf-8"><div style="font-family: Arial, sans-serif; font-size: 11pt; color: #000000;">`;
   const suffix = `</div>`;

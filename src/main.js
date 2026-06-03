@@ -577,29 +577,43 @@ function markdownToHTML(md) {
 
 function getTagClass(tagName) {
   const name = tagName.toLowerCase().trim();
-  if (name.includes('rev-pj') || name.includes('meta ads') || name.includes('google ads')) {
+  // Campaign verticals — Blue
+  if (name === 'rev-pj' || name === 'rd' || name === 'se' || name === 'lec') {
     return 'tag-blue';
   }
-  if (name.includes('agro')) {
+  // Platforms — Blue
+  if (name === 'meta ads' || name === 'google ads') {
+    return 'tag-blue';
+  }
+  // Vertical AGRO — Yellow
+  if (name === 'agro') {
     return 'tag-yellow';
   }
-  if (name.includes('prev')) {
+  // Vertical PREV — Purple
+  if (name === 'prev') {
     return 'tag-purple';
   }
-  if (name.includes('branding')) {
+  // Vertical Branding — Pink
+  if (name === 'branding') {
     return 'tag-pink';
   }
-  return 'tag-blue'; // Default to blue in KDG
+  // Unrecognized tags (ENG, MSG, INSTA, CBO, etc.) — no color
+  return null;
 }
 
 /**
  * Processa formatação inline: **bold**, <u>underline</u>
  */
 function processInline(text) {
-  // 1. Colorir tags entre colchetes fora ou dentro de bold (ex: [REV-PJ], [Meta Ads], etc.), exceto [MANUAL]
+  // 1. Colorir tags entre colchetes (ex: [REV-PJ], [Meta Ads], etc.), exceto [MANUAL]
+  //    Somente tags reconhecidas (verticais e plataformas) recebem cor.
   text = text.replace(/\[(?!MANUAL\b)([^\]]+)\]/gi, (match, p1) => {
     const cls = getTagClass(p1);
-    return `<span class="tag-highlight ${cls}">[${p1}]</span>`;
+    if (cls) {
+      return `<span class="tag-highlight ${cls}">[${p1}]</span>`;
+    }
+    // Tag não reconhecida — renderizar sem cor especial
+    return `[${p1}]`;
   });
 
   // 2. Bold: **text** com classes semânticas baseadas em ações

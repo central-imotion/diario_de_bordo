@@ -31,10 +31,10 @@
   --text-tertiary: #636b7e;
   --text-inverse: #0f1117;
 
-  /* Semantic Colors — for Diary Output */
-  --color-positive: #30a14e;
-  --color-negative: #d1242f;
-  --color-neutral: #f59e0b;
+  /* Semantic Colors — for Diary Output (bright variants for dark mode) */
+  --color-positive: #2ea44f;  /* Green — brighter KDG green for dark bg */
+  --color-negative: #f85149;  /* Red — brighter KDG red for dark bg */
+  --color-neutral: #d4845a;   /* Orange — brighter KDG orange for dark bg */
 
   /* Borders */
   --border-default: #2a2f3e;
@@ -501,23 +501,23 @@ html, body {
 }
 
 .diary-content .tag-highlight.tag-blue {
-  color: var(--accent);
+  color: #4a9eff; /* Bright blue for dark bg — hue of KDG azureBlue */
 }
 
 .diary-content .tag-highlight.tag-yellow {
-  color: var(--color-neutral);
+  color: #d4945a; /* Warm amber for dark bg — hue of KDG yellow */
 }
 
 .diary-content .tag-highlight.tag-purple {
-  color: #c084fc;
+  color: #9b8afb; /* Bright purple for dark bg — hue of KDG purple */
 }
 
 .diary-content .tag-highlight.tag-pink {
-  color: #f472b6;
+  color: #f472b6; /* Bright pink for dark bg — hue of KDG pink */
 }
 
 .diary-content .tag-highlight.tag-default {
-  color: var(--accent);
+  color: #4a9eff;
 }
 
 /* --- Loading Indicator --- */
