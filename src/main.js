@@ -488,11 +488,28 @@ function markdownToHTML(md) {
     cleanMd = md.replace(/<(pensamento|thinking)>[\s\S]*?<\/\1>/i, '').trim();
   }
 
-  // Processar linhas
+  // Processar linhas — parser com suporte a N níveis de aninhamento
   const lines = cleanMd.split('\n');
   const outputLines = [];
-  let inList = false;
-  let listIndent = 0;
+  // Stack de indentações abertas. Cada entrada = indent value de um <ul> aberto.
+  let indentStack = [];
+
+  function closeListsToDepth(targetDepth) {
+    while (indentStack.length > targetDepth) {
+      outputLines.push('</ul>');
+      indentStack.pop();
+    }
+  }
+
+  function closeAllLists() {
+    closeListsToDepth(0);
+  }
+
+  // Calcula a profundidade de uma linha com base no indent (cada 2 chars = +1 nível)
+  function indentToDepth(indent) {
+    if (indent < 2) return 1;
+    return Math.floor(indent / 2) + 1;
+  }
 
   for (let i = 0; i < lines.length; i++) {
     let line = lines[i];
@@ -500,7 +517,7 @@ function markdownToHTML(md) {
 
     // Heading ####
     if (trimmed.startsWith('#### ')) {
-      if (inList) { outputLines.push('</ul>'); inList = false; }
+      closeAllLists();
       const content = trimmed.substring(5);
       outputLines.push(`<h4>${processInline(content)}</h4>`);
       continue;
@@ -508,82 +525,55 @@ function markdownToHTML(md) {
 
     // Heading ###
     if (trimmed.startsWith('### ')) {
-      if (inList) { outputLines.push('</ul>'); inList = false; }
+      closeAllLists();
       const content = trimmed.substring(4);
       outputLines.push(`<h3>${processInline(content)}</h3>`);
       continue;
     }
 
-    // Sub-list item (indented): starts with spaces/tabs then *
-    const subMatch = trimmed.match(/^\*\s+(.*)/);
-    const indentLevel = line.length - line.trimStart().length;
-    if (subMatch && indentLevel >= 2) {
-      if (!inList) {
-        outputLines.push('<ul>');
-        inList = true;
-      }
-      if (listIndent === 0) {
-        outputLines.push('<ul>');
-        listIndent = 1;
-      }
-      outputLines.push(`<li>${processInline(subMatch[1])}</li>`);
-      continue;
-    }
+    // List item em qualquer nível: detecta "* " com qualquer indentação
+    const listMatch = trimmed.match(/^\*\s+(.*)/);
+    if (listMatch) {
+      const indent = line.length - line.trimStart().length;
+      const targetDepth = indentToDepth(indent);
+      const content = listMatch[1];
 
-    // List item (top level): *   text
-    if (trimmed.startsWith('* ') || trimmed.startsWith('*\t')) {
-      const content = trimmed.substring(trimmed.indexOf(' ') + 1).trim();
-
-      // Se entramos numa lista de nível superior e tínhamos sublista aberta, fechar
-      if (inList && listIndent > 0) {
+      // Fechar listas mais profundas que o nível atual
+      while (indentStack.length > targetDepth) {
         outputLines.push('</ul>');
-        listIndent = 0;
+        indentStack.pop();
       }
 
-      if (!inList) {
+      // Abrir listas até chegar ao nível desejado
+      while (indentStack.length < targetDepth) {
         outputLines.push('<ul>');
-        inList = true;
-        listIndent = 0;
+        indentStack.push(indentStack.length + 1);
       }
+
       outputLines.push(`<li>${processInline(content)}</li>`);
       continue;
     }
 
-    // Linha em branco
+    // Linha em branco — fechar todas as listas
     if (trimmed === '') {
-      if (inList && listIndent > 0) {
-        outputLines.push('</ul>');
-        listIndent = 0;
-      }
-      if (inList) {
-        outputLines.push('</ul>');
-        inList = false;
-      }
+      closeAllLists();
       continue;
     }
 
     // Horizontal rule
     if (trimmed === '---' || trimmed === '***' || trimmed === '* * *') {
-      if (inList) { outputLines.push('</ul>'); inList = false; }
+      closeAllLists();
       outputLines.push('<hr>');
       continue;
     }
 
     // Texto normal
-    if (inList && listIndent > 0) {
-      outputLines.push('</ul>');
-      listIndent = 0;
-    }
-    if (inList) {
-      outputLines.push('</ul>');
-      inList = false;
-    }
+    closeAllLists();
     outputLines.push(`<p>${processInline(trimmed)}</p>`);
   }
 
-  // Fechar listas abertas
-  if (listIndent > 0) outputLines.push('</ul>');
-  if (inList) outputLines.push('</ul>');
+  // Fechar listas remanescentes
+  closeAllLists();
 
   let finalHTML = thinkingHTML + outputLines.join('\n');
 

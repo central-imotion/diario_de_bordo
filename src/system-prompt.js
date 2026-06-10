@@ -133,8 +133,8 @@ REGRAS DE FORMATAÇÃO (PADRÃO KDG)
            * <u>"AD 9 - Procura-se 500k"</u>;
            * <u>"AD 15 - Resultado na tela dívida 2M"</u>.
 
-    d) QUEBRA DE LINHA EM MÚLTIPLOS PÚBLICOS:
-       [CRÍTICO] Quando a MESMA ação afeta MÚLTIPLOS PÚBLICOS na mesma campanha, NUNCA junte tudo inline com "e, no público...". Em vez disso, QUEBRE em sub-bullets, um para cada público.
+    d) ██ QUEBRA DE LINHA OBRIGATÓRIA EM MÚLTIPLOS PÚBLICOS ██
+       [PROIBIDO] Quando ações afetam MÚLTIPLOS PÚBLICOS na mesma campanha, é PROIBIDO juntar tudo inline com "e, no público...". Você DEVE QUEBRAR em sub-bullets, um para cada público. Esta regra é INVIOLÁVEL.
 
        ERRADO (tudo numa linha só, ilegível):
        * **[REV-PJ]** [Meta Ads] **Pausamos** por completo o público **00 - [MANUAL] Mix de Interesses + Brasil + 30-60** e, no público **00 - [MANUAL] Aberto + Brasil + 30-60:**
