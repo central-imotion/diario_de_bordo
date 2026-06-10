@@ -10,7 +10,10 @@ import './styles.css';
 // --- Configuração ---
 // Escolha o modelo padrão para a análise: 'gemini' ou 'claude'
 const ACTIVE_MODEL = 'claude';
-
+const PORT = process.env.PORT || 3802; // Usa a porta do Railway ou 3000 localmente
+app.listen(PORT, () => {
+    console.log(`Servidor rodando na porta ${PORT}`);
+});
 // --- State ---
 let antesFiles = [];
 let depoisFiles = [];
