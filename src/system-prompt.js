@@ -86,7 +86,7 @@ REGRAS DE FORMATAÇÃO (PADRÃO KDG)
 5. Nomes de anúncios entre ASPAS e SUBLINHADOS: <u>"AD 14 - CP Dívida 1M"</u>
 6. Verbos em NEGRITO: **pausamos**, **Aumentamos**, **Diminuímos**, **adicionamos**, **Iniciamos**
 7. SOMENTE valores NOVOS em NEGRITO: de R$40/dia para **R$45/dia**
-8. Separadores em listas: ponto e vírgula (;) entre itens, ponto (.) no último item
+8. Separadores em listas: Quando há 2+ anúncios, SEMPRE liste cada anúncio em seu próprio sub-bullet. Use ponto e vírgula (;) no final de cada sub-bullet intermediário e ponto (.) no último.
 9. Ações compostas podem ser combinadas numa mesma frase usando "e":
    **alteramos** a verba do <u>"AD 24"</u> de 38$/dia para **60$/dia** e **pausamos** os anúncios:
 
@@ -116,13 +116,19 @@ REGRAS DE FORMATAÇÃO (PADRÃO KDG)
 
     b) Se há muitas ações (3+) de tipos mistos no mesmo contexto, abra o contexto uma vez e liste as ações como sub-bullets agrupadas por tipo:
        * **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Advantage:**
-         * **pausamos** os anúncios: <u>"AD 9 - Procura-se 500k"</u>; <u>"AD 15 - Resultado na tela dívida 2M"</u>; <u>"AD 17 - 3 pontos"</u>; <u>"AD 23 - CP Dívida de 500k em atraso"</u>.
-         * **alteramos** a verba dos anúncios: <u>"AD 14 - CP Dívida 1M"</u> de 40$/dia-útil para **60$/dia-útil;** <u>"AD 21 - Pensando em vender os bens"</u> de 38$/dia-útil para **70$/dia-útil.**
-         * **adicionamos** os anúncios: <u>"AD 26 - CP Se eu parar de pagar"</u>, com **40$/dia-útil;** <u>"AD 30 - Dívidas 200k (Neymar)"</u>, com **40$/dia-útil.**
+         * **pausamos** os anúncios:
+           * <u>"AD 9 - Procura-se 500k"</u>;
+           * <u>"AD 15 - Resultado na tela dívida 2M"</u>;
+           * <u>"AD 17 - 3 pontos"</u>;
+           * <u>"AD 23 - CP Dívida de 500k em atraso"</u>.
+         * **alteramos** a verba dos anúncios:
+           * <u>"AD 14 - CP Dívida 1M"</u> de 40$/dia-útil para **60$/dia-útil;**
+           * <u>"AD 21 - Pensando em vender os bens"</u> de 38$/dia-útil para **70$/dia-útil.**
+         * **adicionamos** os anúncios:
+           * <u>"AD 26 - CP Se eu parar de pagar"</u>, com **40$/dia-útil;**
+           * <u>"AD 30 - Dívidas 200k (Neymar)"</u>, com **40$/dia-útil.**
 
-    c) Se há ações do MESMO tipo (ex: 3 pausas) no mesmo contexto, agrupe-as usando vírgulas inline (para 2 ADs) ou sub-bullets (para 3+ ADs):
-       Inline: **pausamos** os anúncios <u>"AD 9"</u> e <u>"AD 15"</u>.
-       Sub-bullets:
+    c) Se há ações do MESMO tipo (ex: 2+ pausas) no mesmo contexto, SEMPRE use sub-bullets — um por anúncio:
          * **pausamos** os anúncios:
            * <u>"AD 9 - Procura-se 500k"</u>;
            * <u>"AD 15 - Resultado na tela dívida 2M"</u>.
@@ -142,8 +148,13 @@ REGRAS DE FORMATAÇÃO (PADRÃO KDG)
        * **[REV-PJ]** [Meta Ads] Na campanha de formulário:
          * **Pausamos** por completo o público **00 - [MANUAL] Mix de Interesses + Brasil + 30-60.**
          * no público **00 - [MANUAL] Aberto + Brasil + 30-60:**
-           * **pausamos** os anúncios <u>"AD 14"</u> e <u>"AD 16"</u>.
-           * **adicionamos** os anúncios: <u>"AD 17"</u>, com **33$/dia-útil;** <u>"AD 18"</u>, com **50$/dia-útil.**
+           * **pausamos** os anúncios:
+             * <u>"AD 14"</u>;
+             * <u>"AD 16"</u>.
+           * **adicionamos** os anúncios:
+             * <u>"AD 17"</u>, com **33$/dia-útil;**
+             * <u>"AD 18"</u>, com **50$/dia-útil;**
+             * <u>"AD 19"</u>, com **44$/dia-útil.**
 
 11. Ações de Substituição de Criativos (Budget Shift):
     - Se o gestor desativou um anúncio e subiu outro com o mesmo orçamento, junte na mesma linha:
@@ -203,10 +214,22 @@ OUTPUT CORRETO:
 #### **Data da Otimização: 19/05/2026**
 **Alterações:**
 *   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Advantage:**
-    *   **pausamos** os anúncios: <u>"AD 9 - Procura-se 500k"</u>; <u>"AD 15 - Resultado na tela dívida 2M"</u>; <u>"AD 17 - 3 pontos"</u>; <u>"AD 23 - CP Dívida de 500k em atraso"</u>.
-    *   **alteramos** a verba dos anúncios: <u>"AD 14 - CP Dívida 1M"</u> de 40$/dia-útil para **60$/dia-útil;** <u>"AD 21 - Pensando em vender os bens"</u> de 38$/dia-útil para **70$/dia-útil.**
-    *   **adicionamos** os anúncios: <u>"AD 26 - CP Se eu parar de pagar"</u>, com **40$/dia-útil;** <u>"AD 30 - Diívidas 200k (Neymar)"</u>, com **40$/dia-útil.**
-*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Aberto + RS,** **alteramos** a verba do <u>"AD 24 - Trabalha e dInheiro some (RS)"</u> de 38$/dia-útil para **60$/dia-útil** e **pausamos** os anúncios <u>"AD 19 - Procura-se 500k (Rio Grande do Sul)"</u> e <u>"AD 25 - Caso do casal do RS"</u>.
+    *   **pausamos** os anúncios:
+        * <u>"AD 9 - Procura-se 500k"</u>;
+        * <u>"AD 15 - Resultado na tela dívida 2M"</u>;
+        * <u>"AD 17 - 3 pontos"</u>;
+        * <u>"AD 23 - CP Dívida de 500k em atraso"</u>.
+    *   **alteramos** a verba dos anúncios:
+        * <u>"AD 14 - CP Dívida 1M"</u> de 40$/dia-útil para **60$/dia-útil;**
+        * <u>"AD 21 - Pensando em vender os bens"</u> de 38$/dia-útil para **70$/dia-útil.**
+    *   **adicionamos** os anúncios:
+        * <u>"AD 26 - CP Se eu parar de pagar"</u>, com **40$/dia-útil;**
+        * <u>"AD 30 - Diívidas 200k (Neymar)"</u>, com **40$/dia-útil.**
+*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Aberto + RS:**
+    *   **alteramos** a verba do <u>"AD 24 - Trabalha e dInheiro some (RS)"</u> de 38$/dia-útil para **60$/dia-útil.**
+    *   **pausamos** os anúncios:
+        * <u>"AD 19 - Procura-se 500k (Rio Grande do Sul)"</u>;
+        * <u>"AD 25 - Caso do casal do RS"</u>.
 *   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Aberto + GO,** **alteramos** a verba do <u>"AD 16 - CP Dívida 1M (GO)"</u> de 39$/dia-útil para **60$/dia-útil** e **pausamos** o <u>"AD 18 - Procura-se 500k (Goiás)"</u>.
 *   **[REV-PJ]** [Meta Ads] **Pausamos** por completo a campanha de mensagem.
 *   **[REV-PJ]** [Meta Ads] Na campanha de formulário, **adicionamos** os públicos:
@@ -238,8 +261,12 @@ OUTPUT CORRETO:
 #### **Data da Otimização: 22/05/2026**
 **Alterações:**
 *   **[REV-PJ]** [Meta Ads] Na campanha de formulário, **adicionamos** em todos os anúncios uma **regra de valor de idade** e no público **[MANUAL] AdvantagePlus:**
-    *   **pausamos** os anúncios <u>"AD 4 - De 738k para 22k"</u> e <u>"AD 5 - 6 parcelas em atraso"</u>.
-    *   **adicionamos** os anúncios: <u>"AD 7 - CP Banco bloquear as contas"</u>, com **36$/dia-útil;** <u>"AD 8 - CP Parcela do Pronampe subiu"</u>, com **36$/dia-útil.**
+    *   **pausamos** os anúncios:
+        * <u>"AD 4 - De 738k para 22k"</u>;
+        * <u>"AD 5 - 6 parcelas em atraso"</u>.
+    *   **adicionamos** os anúncios:
+        * <u>"AD 7 - CP Banco bloquear as contas"</u>, com **36$/dia-útil;**
+        * <u>"AD 8 - CP Parcela do Pronampe subiu"</u>, com **36$/dia-útil.**
 
 **Visão Geral do Mapa de Campanhas:**
 
@@ -262,8 +289,12 @@ OUTPUT CORRETO:
     *   <u>"AD 19 - De 900k para 55k"</u>, com **40$/dia.**
 *   **[REV-PJ]** [Meta Ads] Na campanha de formulário, **pausamos** por completo o público **[MANUAL] Mix de interesses (CEO) + Sul, Sudeste e Centro-Oeste.**
 *   **[REV-PJ]** [Meta Ads] Na campanha de TYPEBOT, no público **[MANUAL] Mix de interesses (CEO & Founders):**
-    *   **pausamos** os anúncios <u>"AD 14 - Pronampe em situação crítica"</u> e <u>"AD 15 - Situação de risco"</u>.
-    *   **adicionamos** os anúncios: <u>"AD 18 - De 300k para 700k"</u>, com **45$/dia;** <u>"AD 19 - De 900k para 55k"</u>, com **45$/dia.**
+    *   **pausamos** os anúncios:
+        * <u>"AD 14 - Pronampe em situação crítica"</u>;
+        * <u>"AD 15 - Situação de risco"</u>.
+    *   **adicionamos** os anúncios:
+        * <u>"AD 18 - De 300k para 700k"</u>, com **45$/dia;**
+        * <u>"AD 19 - De 900k para 55k"</u>, com **45$/dia.**
 
 **Visão Geral do Mapa de Campanhas:**
 
