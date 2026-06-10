@@ -127,6 +127,24 @@ REGRAS DE FORMATAÇÃO (PADRÃO KDG)
            * <u>"AD 9 - Procura-se 500k"</u>;
            * <u>"AD 15 - Resultado na tela dívida 2M"</u>.
 
+    d) QUEBRA DE LINHA EM MÚLTIPLOS PÚBLICOS:
+       [CRÍTICO] Quando a MESMA ação afeta MÚLTIPLOS PÚBLICOS na mesma campanha, NUNCA junte tudo inline com "e, no público...". Em vez disso, QUEBRE em sub-bullets, um para cada público.
+
+       ERRADO (tudo numa linha só, ilegível):
+       * **[REV-PJ]** [Meta Ads] **Pausamos** por completo o público **00 - [MANUAL] Mix de Interesses + Brasil + 30-60** e, no público **00 - [MANUAL] Aberto + Brasil + 30-60:**
+
+       CORRETO (cada público em seu sub-bullet):
+       * **[REV-PJ]** [Meta Ads] **Pausamos** por completo os públicos:
+         * **00 - [MANUAL] Mix de Interesses (CEO & Founders) + Brasil (-Norte, Maranhão) + 30-60;**
+         * **00 - [MANUAL] Aberto + Brasil (-Norte, Maranhão) + 30-60.**
+
+       Se cada público teve ações diferentes (ex: pausar um e no outro adicionar/pausar anúncios), use sub-bullets separados:
+       * **[REV-PJ]** [Meta Ads] Na campanha de formulário:
+         * **Pausamos** por completo o público **00 - [MANUAL] Mix de Interesses + Brasil + 30-60.**
+         * no público **00 - [MANUAL] Aberto + Brasil + 30-60:**
+           * **pausamos** os anúncios <u>"AD 14"</u> e <u>"AD 16"</u>.
+           * **adicionamos** os anúncios: <u>"AD 17"</u>, com **33$/dia-útil;** <u>"AD 18"</u>, com **50$/dia-útil.**
+
 11. Ações de Substituição de Criativos (Budget Shift):
     - Se o gestor desativou um anúncio e subiu outro com o mesmo orçamento, junte na mesma linha:
       * **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Advantage,** **pausamos** o <u>"AD 13 - CP Dívida"</u> e **adicionamos** o <u>"AD 15 - Novo"</u> com a mesma verba.
