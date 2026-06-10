@@ -488,15 +488,73 @@ export function renderDiaryHTML(data) {
 export async function copyDiaryToClipboard(element) {
   if (!element) return;
 
-  // Clonar para remover os detalhes do pensamento antes de copiar
+  // Clonar para processar o DOM antes de extrair o HTML
   const clone = element.cloneNode(true);
+  
+  // Remover os detalhes do pensamento antes de copiar
   const thinking = clone.querySelector('.thinking-details');
   if (thinking) {
     thinking.remove();
   }
 
+  // 1. Converter verbos de ação (.action-positive, .action-negative, .action-neutral)
+  clone.querySelectorAll('.action-positive, .action-negative, .action-neutral').forEach(el => {
+    let color = '';
+    if (el.classList.contains('action-positive')) color = '#18794e';
+    else if (el.classList.contains('action-negative')) color = '#f43932';
+    else if (el.classList.contains('action-neutral')) color = '#99543a';
+
+    if (color) {
+      const span = document.createElement('span');
+      span.style.color = color;
+      
+      const strong = document.createElement('strong');
+      strong.textContent = el.textContent;
+      
+      span.appendChild(strong);
+      el.replaceWith(span);
+    }
+  });
+
+  // 2. Converter tags coloridas (.tag-highlight)
+  clone.querySelectorAll('.tag-highlight').forEach(el => {
+    let color = '#0b68cb'; // default
+    if (el.classList.contains('tag-blue')) color = '#0b68cb';
+    else if (el.classList.contains('tag-platform')) color = '#0b68cb';
+    else if (el.classList.contains('tag-orange')) color = '#b45309';
+    else if (el.classList.contains('tag-red')) color = '#dc2626';
+    else if (el.classList.contains('tag-green')) color = '#18794e';
+    else if (el.classList.contains('tag-teal')) color = '#0e7490';
+    else if (el.classList.contains('tag-yellow')) color = '#915930';
+    else if (el.classList.contains('tag-purple')) color = '#5a43d6';
+    else if (el.classList.contains('tag-pink')) color = '#e93d82';
+
+    const span = document.createElement('span');
+    span.style.color = color;
+    
+    const strong = document.createElement('strong');
+    strong.textContent = el.textContent;
+    
+    span.appendChild(strong);
+    
+    // Se o elemento pai do el for um strong, substitui o strong pai para evitar strong duplicado
+    if (el.parentElement && el.parentElement.tagName === 'STRONG') {
+      el.parentElement.replaceWith(span);
+    } else {
+      el.replaceWith(span);
+    }
+  });
+
+  // 3. Remover classes e atributos que possam quebrar a formatação no ClickUp
+  clone.querySelectorAll('*').forEach(el => {
+    el.removeAttribute('class');
+    el.removeAttribute('contenteditable');
+  });
+
   const htmlContent = clone.innerHTML;
-  const styledHTML = buildStyledHTML(htmlContent);
+  
+  // Embrulhar em uma estrutura básica com utf-8
+  const styledHTML = `<meta charset="utf-8"><div style="font-family: Arial, sans-serif; font-size: 11pt; color: #000000;">${htmlContent}</div>`;
 
   try {
     const blob = new Blob([styledHTML], { type: 'text/html' });
@@ -508,9 +566,39 @@ export async function copyDiaryToClipboard(element) {
     });
 
     await navigator.clipboard.write([clipboardItem]);
-    console.log('[Editor] Copiado via Async Clipboard API');
+    console.log('[Editor] Copiado com estilos inline aninhados via Async Clipboard API');
   } catch (err) {
     console.warn('[Editor] Clipboard API falhou. Tentando fallback...', err);
+    
+    // Fallback: aplicar os estilos direto no elemento original temporariamente antes do execCommand
+    const originalSpans = [];
+    
+    // Função auxiliar para aplicar estilos inline temporários
+    element.querySelectorAll('.action-positive, .action-negative, .action-neutral, .tag-highlight').forEach(el => {
+      const originalStyle = el.getAttribute('style') || '';
+      originalSpans.push({ el, originalStyle });
+      
+      let color = '';
+      if (el.classList.contains('action-positive')) color = '#18794e';
+      else if (el.classList.contains('action-negative')) color = '#f43932';
+      else if (el.classList.contains('action-neutral')) color = '#99543a';
+      else if (el.classList.contains('tag-blue')) color = '#0b68cb';
+      else if (el.classList.contains('tag-platform')) color = '#0b68cb';
+      else if (el.classList.contains('tag-orange')) color = '#b45309';
+      else if (el.classList.contains('tag-red')) color = '#dc2626';
+      else if (el.classList.contains('tag-green')) color = '#18794e';
+      else if (el.classList.contains('tag-teal')) color = '#0e7490';
+      else if (el.classList.contains('tag-yellow')) color = '#915930';
+      else if (el.classList.contains('tag-purple')) color = '#5a43d6';
+      else if (el.classList.contains('tag-pink')) color = '#e93d82';
+      else if (el.classList.contains('tag-highlight')) color = '#0b68cb';
+      
+      if (color) {
+        el.style.color = color;
+        el.style.fontWeight = 'bold';
+      }
+    });
+
     const range = document.createRange();
     range.selectNodeContents(element);
     const selection = window.getSelection();
@@ -518,37 +606,14 @@ export async function copyDiaryToClipboard(element) {
     selection.addRange(range);
     document.execCommand('copy');
     selection.removeAllRanges();
+
+    // Restaurar estilos originais do DOM local
+    originalSpans.forEach(item => {
+      if (item.originalStyle) {
+        item.el.setAttribute('style', item.originalStyle);
+      } else {
+        item.el.removeAttribute('style');
+      }
+    });
   }
-}
-
-function buildStyledHTML(innerHTML) {
-  let styled = innerHTML;
-  
-  // Convert action classes to inline styles for pasting (KDG ClickUp exact colors — light bg)
-  styled = styled.replace(/class="action-positive"/gi, 'style="color: #18794e; font-weight: bold;"');
-  styled = styled.replace(/class="action-negative"/gi, 'style="color: #f43932; font-weight: bold;"');
-  styled = styled.replace(/class="action-neutral"/gi, 'style="color: #99543a; font-weight: bold;"');
-  
-  // Convert tag classes to inline styles for pasting (KDG ClickUp exact colors — light bg)
-  styled = styled.replace(/class="tag-highlight tag-blue"/gi, 'style="color: #0b68cb; font-weight: bold;"');
-  styled = styled.replace(/class="tag-highlight tag-platform"/gi, 'style="color: #0b68cb; font-weight: bold;"');
-  styled = styled.replace(/class="tag-highlight tag-orange"/gi, 'style="color: #b45309; font-weight: bold;"');
-  styled = styled.replace(/class="tag-highlight tag-red"/gi, 'style="color: #dc2626; font-weight: bold;"');
-  styled = styled.replace(/class="tag-highlight tag-green"/gi, 'style="color: #18794e; font-weight: bold;"');
-  styled = styled.replace(/class="tag-highlight tag-teal"/gi, 'style="color: #0e7490; font-weight: bold;"');
-  styled = styled.replace(/class="tag-highlight tag-yellow"/gi, 'style="color: #915930; font-weight: bold;"');
-  styled = styled.replace(/class="tag-highlight tag-purple"/gi, 'style="color: #5a43d6; font-weight: bold;"');
-  styled = styled.replace(/class="tag-highlight tag-pink"/gi, 'style="color: #e93d82; font-weight: bold;"');
-  styled = styled.replace(/class="tag-highlight tag-default"/gi, 'style="color: #0b68cb; font-weight: bold;"');
-  
-  // Handle any tag-highlight classes that might not have a specific color class
-  styled = styled.replace(/class="tag-highlight" style="([^"]*)"/gi, 'style="color: #0b68cb; font-weight: bold; $1"');
-  styled = styled.replace(/class="tag-highlight"/gi, 'style="color: #0b68cb; font-weight: bold;"');
-
-  // Remove any remaining CSS class attributes (ClickUp strips classes but keeps inline styles)
-  styled = styled.replace(/\s*class="[^"]*"/gi, '');
-
-  const prefix = `<meta charset="utf-8"><div style="font-family: Arial, sans-serif; font-size: 11pt; color: #000000;">`;
-  const suffix = `</div>`;
-  return prefix + styled + suffix;
 }
