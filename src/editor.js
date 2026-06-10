@@ -551,7 +551,15 @@ export async function copyDiaryToClipboard(element) {
     el.removeAttribute('contenteditable');
   });
 
-  const htmlContent = clone.innerHTML;
+  let htmlContent = clone.innerHTML;
+  
+  // Converter rgb(r, g, b) para hex (#ffffff) porque o ClickUp/Quill limpa cores em formato rgb()
+  htmlContent = htmlContent.replace(/rgb\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/gi, (match, r, g, b) => {
+    const rs = parseInt(r, 10).toString(16).padStart(2, '0');
+    const gs = parseInt(g, 10).toString(16).padStart(2, '0');
+    const bs = parseInt(b, 10).toString(16).padStart(2, '0');
+    return `#${rs}${gs}${bs}`;
+  });
   
   // Embrulhar em uma estrutura básica com utf-8
   const styledHTML = `<meta charset="utf-8"><div style="font-family: Arial, sans-serif; font-size: 11pt; color: #000000;">${htmlContent}</div>`;
