@@ -501,23 +501,43 @@ html, body {
 }
 
 .diary-content .tag-highlight.tag-blue {
-  color: #4a9eff; /* Bright blue for dark bg — hue of KDG azureBlue */
+  color: #4a9eff; /* Azul forte — REV-PJ, RD, SE, DDA */
+}
+
+.diary-content .tag-highlight.tag-platform {
+  color: #64b5f6; /* Azul claro — Meta Ads, Google Ads */
+}
+
+.diary-content .tag-highlight.tag-orange {
+  color: #ffb74d; /* Laranja — TRAB */
+}
+
+.diary-content .tag-highlight.tag-red {
+  color: #ef5350; /* Vermelho/Coral — FRAUDE */
+}
+
+.diary-content .tag-highlight.tag-green {
+  color: #66bb6a; /* Verde — LEADS */
+}
+
+.diary-content .tag-highlight.tag-teal {
+  color: #4dd0e1; /* Ciano/Teal — ENG */
 }
 
 .diary-content .tag-highlight.tag-yellow {
-  color: #d4945a; /* Warm amber for dark bg — hue of KDG yellow */
+  color: #d4945a; /* Warm amber — AGRO */
 }
 
 .diary-content .tag-highlight.tag-purple {
-  color: #9b8afb; /* Bright purple for dark bg — hue of KDG purple */
+  color: #9b8afb; /* Roxo — PREV */
 }
 
 .diary-content .tag-highlight.tag-pink {
-  color: #f472b6; /* Bright pink for dark bg — hue of KDG pink */
+  color: #f472b6; /* Rosa — BRANDING */
 }
 
 .diary-content .tag-highlight.tag-default {
-  color: #4a9eff;
+  color: #90a4ae; /* Cinza-azulado — tags desconhecidas */
 }
 
 /* --- Loading Indicator --- */

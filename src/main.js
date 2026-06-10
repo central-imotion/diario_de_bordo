@@ -4,6 +4,7 @@
 
 import { analyzeImages } from './ai-service.js';
 import { copyDiaryToClipboard } from './editor.js';
+import './styles.css';
 
 
 // --- Configuração ---
@@ -501,6 +502,22 @@ function markdownToHTML(md) {
       continue;
     }
 
+    // Sub-list item (indented): starts with spaces/tabs then *
+    const subMatch = trimmed.match(/^\*\s+(.*)/);
+    const indentLevel = line.length - line.trimStart().length;
+    if (subMatch && indentLevel >= 2) {
+      if (!inList) {
+        outputLines.push('<ul>');
+        inList = true;
+      }
+      if (listIndent === 0) {
+        outputLines.push('<ul>');
+        listIndent = 1;
+      }
+      outputLines.push(`<li>${processInline(subMatch[1])}</li>`);
+      continue;
+    }
+
     // List item (top level): *   text
     if (trimmed.startsWith('* ') || trimmed.startsWith('*\t')) {
       const content = trimmed.substring(trimmed.indexOf(' ') + 1).trim();
@@ -517,22 +534,6 @@ function markdownToHTML(md) {
         listIndent = 0;
       }
       outputLines.push(`<li>${processInline(content)}</li>`);
-      continue;
-    }
-
-    // Sub-list item (indented): starts with spaces/tabs then *
-    const subMatch = trimmed.match(/^\*\s+(.*)/);
-    const indentLevel = line.length - line.trimStart().length;
-    if (subMatch && indentLevel >= 4) {
-      if (!inList) {
-        outputLines.push('<ul>');
-        inList = true;
-      }
-      if (listIndent === 0) {
-        outputLines.push('<ul>');
-        listIndent = 1;
-      }
-      outputLines.push(`<li>${processInline(subMatch[1])}</li>`);
       continue;
     }
 
@@ -572,32 +573,80 @@ function markdownToHTML(md) {
   if (listIndent > 0) outputLines.push('</ul>');
   if (inList) outputLines.push('</ul>');
 
-  return thinkingHTML + outputLines.join('\n');
+  let finalHTML = thinkingHTML + outputLines.join('\n');
+
+  // Pós-processamento: colorir TODAS as tags [TAG] no HTML final
+  // Roda por último para garantir que tags dentro de <strong> etc. sejam capturadas
+  finalHTML = finalHTML.replace(/\[(?!MANUAL\b)([^\]<>]+)\]/g, (match, p1) => {
+    // Ignorar se já está dentro de um span (evitar re-processar)
+    // Ignorar se faz parte de atributo HTML
+    const cls = getTagClass(p1);
+    if (cls) {
+      return `<span class="tag-highlight ${cls}">[${p1}]</span>`;
+    }
+    return match;
+  });
+
+  return finalHTML;
 }
 
 function getTagClass(tagName) {
   const name = tagName.toLowerCase().trim();
-  // Campaign verticals — Blue
-  if (name === 'rev-pj' || name === 'rd' || name === 'se' || name === 'lec') {
+
+  // Plataformas — Azul claro
+  if (name === 'meta ads' || name === 'meta' || name === 'google ads' || name === 'google') {
+    return 'tag-platform';
+  }
+
+  // Verticais jurídicas — Azul forte
+  if (name === 'rev-pj' || name === 'rev-pf' || name === 'rev-pj/pf' || name === 'rd' || name === 'se' || name === 'lec' || name === 'dda') {
     return 'tag-blue';
   }
-  // Platforms — Blue
-  if (name === 'meta ads' || name === 'google ads') {
-    return 'tag-blue';
+
+  // TRAB — Laranja/Amber
+  if (name === 'trab') {
+    return 'tag-orange';
   }
-  // Vertical AGRO — Yellow
+
+  // FRAUDE — Vermelho/Coral
+  if (name === 'fraude') {
+    return 'tag-red';
+  }
+
+  // LEADS — Verde
+  if (name === 'leads') {
+    return 'tag-green';
+  }
+
+  // ENG / NPS — Ciano/Teal
+  if (name === 'eng' || name === 'nps') {
+    return 'tag-teal';
+  }
+
+  // AGRO — Amarelo/Amber
   if (name === 'agro') {
     return 'tag-yellow';
   }
-  // Vertical PREV — Purple
+
+  // PREV — Roxo
   if (name === 'prev') {
     return 'tag-purple';
   }
-  // Vertical Branding — Pink
+
+  // Branding — Rosa
   if (name === 'branding') {
     return 'tag-pink';
   }
-  // Unrecognized tags (ENG, MSG, INSTA, CBO, etc.) — no color
+
+  // Abono de Permanencia, Professores-Hor, DF, RCH
+  if (name === 'abono de permanencia' || name === 'abono de permanência') {
+    return 'tag-teal';
+  }
+  if (name.startsWith('professores') || name === 'df' || name === 'rch') {
+    return 'tag-purple';
+  }
+
+  // Tags desconhecidas (AUTO, INSTA, AD, CBO, etc.) — SEM cor
   return null;
 }
 
@@ -605,33 +654,22 @@ function getTagClass(tagName) {
  * Processa formatação inline: **bold**, <u>underline</u>
  */
 function processInline(text) {
-  // 1. Colorir tags entre colchetes (ex: [REV-PJ], [Meta Ads], etc.), exceto [MANUAL]
-  //    Somente tags reconhecidas (verticais e plataformas) recebem cor.
-  text = text.replace(/\[(?!MANUAL\b)([^\]]+)\]/gi, (match, p1) => {
-    const cls = getTagClass(p1);
-    if (cls) {
-      return `<span class="tag-highlight ${cls}">[${p1}]</span>`;
-    }
-    // Tag não reconhecida — renderizar sem cor especial
-    return `[${p1}]`;
-  });
-
-  // 2. Bold: **text** com classes semânticas baseadas em ações
+  // 1. Bold: **text** com classes semânticas baseadas em ações
   text = text.replace(/\*\*([^*]+)\*\*/g, (match, p1) => {
     const clean = p1.trim();
     
-    // Verbos de adição/criação -> Verde (positive)
-    if (/^(adicionamos|adicionado|adicionada|adicionou|iniciamos|iniciado|iniciada|iniciou|reativamos|reativado|reativada|reativou|aumentamos|aumentou|aumento|criamos|criado|criada|criou)$/i.test(clean)) {
+    // Verbos de adição/criação/aumento -> Verde (positive)
+    if (/^(adicionamos|adicionado|adicionada|adicionou|iniciamos|iniciado|iniciada|iniciou|reativamos|reativado|reativada|reativou|aumentamos|aumentou|aumento|criamos|criado|criada|criou|subimos|subiu|acrescentamos)$/i.test(clean)) {
       return `<strong class="action-positive">${p1}</strong>`;
     }
     
-    // Verbos de pausa/remoção -> Vermelho (negative)
-    if (/^(pausamos|pausado|pausada|pausou|pausa|pausar|removemos|removido|removida|removeu)$/i.test(clean)) {
+    // Verbos de pausa/remoção/redução -> Vermelho (negative)
+    if (/^(pausamos|pausado|pausada|pausou|pausa|pausar|removemos|removido|removida|removeu|diminuímos|diminuimos|diminuído|reduzimos|reduzido|reduzida|reduziu|redução|reducao)$/i.test(clean)) {
       return `<strong class="action-negative">${p1}</strong>`;
     }
     
-    // Verbos de alteração/redução -> Laranja/Amarelo (neutral)
-    if (/^(alteramos|alterado|alterada|alterou|alteração|alteracao|reduzimos|reduzido|reduzida|reduziu|redução|reducao)$/i.test(clean)) {
+    // Verbos de alteração genérica -> Laranja/Amarelo (neutral)
+    if (/^(alteramos|alterado|alterada|alterou|alteração|alteracao|mudamos|mudou|jogamos|colocamos|negativamos|excluímos|excluimos)$/i.test(clean)) {
       return `<strong class="action-neutral">${p1}</strong>`;
     }
     
