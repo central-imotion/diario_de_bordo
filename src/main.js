@@ -50,15 +50,27 @@ function init() {
 
   // Paste support
   document.addEventListener('paste', (e) => {
-    const items = e.clipboardData?.items;
-    if (!items) return;
-
     const files = [];
-    for (let i = 0; i < items.length; i++) {
-      if (items[i].type.startsWith('image/')) {
-        const file = items[i].getAsFile();
-        if (file) {
+
+    // 1. Tentar pegar diretamente da lista de arquivos do clipboard (mais robusto para arquivos copiados)
+    if (e.clipboardData?.files && e.clipboardData.files.length > 0) {
+      for (let i = 0; i < e.clipboardData.files.length; i++) {
+        const file = e.clipboardData.files[i];
+        if (file.type.startsWith('image/')) {
           files.push(file);
+        }
+      }
+    }
+
+    // 2. Fallback usando items (para imagens copiadas em memória, print screen, etc.)
+    if (files.length === 0 && e.clipboardData?.items) {
+      const items = e.clipboardData.items;
+      for (let i = 0; i < items.length; i++) {
+        if (items[i].type.startsWith('image/')) {
+          const file = items[i].getAsFile();
+          if (file) {
+            files.push(file);
+          }
         }
       }
     }
