@@ -524,13 +524,18 @@ export async function copyDiaryToClipboard(element) {
 function buildStyledHTML(innerHTML) {
   let styled = innerHTML;
   
-  // Convert action classes to inline styles for pasting (KDG ClickUp exact colors)
+  // Convert action classes to inline styles for pasting (KDG ClickUp exact colors — light bg)
   styled = styled.replace(/class="action-positive"/gi, 'style="color: #18794e; font-weight: bold;"');
   styled = styled.replace(/class="action-negative"/gi, 'style="color: #f43932; font-weight: bold;"');
   styled = styled.replace(/class="action-neutral"/gi, 'style="color: #99543a; font-weight: bold;"');
   
-  // Convert tag classes to inline styles for pasting (KDG ClickUp exact colors)
+  // Convert tag classes to inline styles for pasting (KDG ClickUp exact colors — light bg)
   styled = styled.replace(/class="tag-highlight tag-blue"/gi, 'style="color: #0b68cb; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-platform"/gi, 'style="color: #0b68cb; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-orange"/gi, 'style="color: #b45309; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-red"/gi, 'style="color: #dc2626; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-green"/gi, 'style="color: #18794e; font-weight: bold;"');
+  styled = styled.replace(/class="tag-highlight tag-teal"/gi, 'style="color: #0e7490; font-weight: bold;"');
   styled = styled.replace(/class="tag-highlight tag-yellow"/gi, 'style="color: #915930; font-weight: bold;"');
   styled = styled.replace(/class="tag-highlight tag-purple"/gi, 'style="color: #5a43d6; font-weight: bold;"');
   styled = styled.replace(/class="tag-highlight tag-pink"/gi, 'style="color: #e93d82; font-weight: bold;"');
@@ -539,6 +544,9 @@ function buildStyledHTML(innerHTML) {
   // Handle any tag-highlight classes that might not have a specific color class
   styled = styled.replace(/class="tag-highlight" style="([^"]*)"/gi, 'style="color: #0b68cb; font-weight: bold; $1"');
   styled = styled.replace(/class="tag-highlight"/gi, 'style="color: #0b68cb; font-weight: bold;"');
+
+  // Remove any remaining CSS class attributes (ClickUp strips classes but keeps inline styles)
+  styled = styled.replace(/\s*class="[^"]*"/gi, '');
 
   const prefix = `<meta charset="utf-8"><div style="font-family: Arial, sans-serif; font-size: 11pt; color: #000000;">`;
   const suffix = `</div>`;
