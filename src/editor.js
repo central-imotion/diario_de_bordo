@@ -499,49 +499,77 @@ export async function copyDiaryToClipboard(element) {
 
   // 1. Converter verbos de ação (.action-positive, .action-negative, .action-neutral)
   clone.querySelectorAll('.action-positive, .action-negative, .action-neutral').forEach(el => {
-    let color = '';
-    if (el.classList.contains('action-positive')) color = '#18794e';
-    else if (el.classList.contains('action-negative')) color = '#f43932';
-    else if (el.classList.contains('action-neutral')) color = '#99543a';
+    let qlColor = '';
+    let styleColor = '';
+    if (el.classList.contains('action-positive')) {
+      qlColor = 'green';
+      styleColor = '#18794e';
+    } else if (el.classList.contains('action-negative')) {
+      qlColor = 'red';
+      styleColor = '#f43932';
+    } else if (el.classList.contains('action-neutral')) {
+      qlColor = 'orange';
+      styleColor = '#99543a';
+    }
 
-    if (color) {
+    if (qlColor) {
+      const strong = document.createElement('strong');
       const span = document.createElement('span');
-      span.style.color = color;
-      span.style.fontWeight = 'bold';
+      span.className = `ql-text-color ql-color-${qlColor}`;
+      span.setAttribute('data-test', `ql-text-color-${qlColor}`);
+      span.style.color = styleColor;
       span.textContent = el.textContent;
-      el.replaceWith(span);
+      
+      strong.appendChild(span);
+      el.replaceWith(strong);
     }
   });
 
   // 2. Converter tags coloridas (.tag-highlight)
   clone.querySelectorAll('.tag-highlight').forEach(el => {
-    let color = '#0b68cb'; // default
-    if (el.classList.contains('tag-blue')) color = '#0b68cb';
-    else if (el.classList.contains('tag-platform')) color = '#0b68cb';
-    else if (el.classList.contains('tag-orange')) color = '#b45309';
-    else if (el.classList.contains('tag-red')) color = '#dc2626';
-    else if (el.classList.contains('tag-green')) color = '#18794e';
-    else if (el.classList.contains('tag-teal')) color = '#0e7490';
-    else if (el.classList.contains('tag-yellow')) color = '#915930';
-    else if (el.classList.contains('tag-purple')) color = '#5a43d6';
-    else if (el.classList.contains('tag-pink')) color = '#e93d82';
+    let qlColor = 'blue'; // default
+    let styleColor = '#0b68cb';
+    
+    if (el.classList.contains('tag-blue')) { qlColor = 'blue'; styleColor = '#0b68cb'; }
+    else if (el.classList.contains('tag-platform')) { qlColor = 'blue'; styleColor = '#0b68cb'; }
+    else if (el.classList.contains('tag-orange')) { qlColor = 'orange'; styleColor = '#b45309'; }
+    else if (el.classList.contains('tag-red')) { qlColor = 'red'; styleColor = '#dc2626'; }
+    else if (el.classList.contains('tag-green')) { qlColor = 'green'; styleColor = '#18794e'; }
+    else if (el.classList.contains('tag-teal')) { qlColor = 'teal'; styleColor = '#0e7490'; }
+    else if (el.classList.contains('tag-yellow')) { qlColor = 'yellow'; styleColor = '#915930'; }
+    else if (el.classList.contains('tag-purple')) { qlColor = 'purple'; styleColor = '#5a43d6'; }
+    else if (el.classList.contains('tag-pink')) { qlColor = 'pink'; styleColor = '#e93d82'; }
 
+    const strong = document.createElement('strong');
     const span = document.createElement('span');
-    span.style.color = color;
-    span.style.fontWeight = 'bold';
+    span.className = `ql-text-color ql-color-${qlColor}`;
+    span.setAttribute('data-test', `ql-text-color-${qlColor}`);
+    span.style.color = styleColor;
     span.textContent = el.textContent;
+    
+    strong.appendChild(span);
     
     // Se o elemento pai do el for um strong, substitui o strong pai para evitar tags extras
     if (el.parentElement && el.parentElement.tagName === 'STRONG') {
-      el.parentElement.replaceWith(span);
+      el.parentElement.replaceWith(strong);
     } else {
-      el.replaceWith(span);
+      el.replaceWith(strong);
     }
   });
 
-  // 3. Remover classes e atributos que possam quebrar a formatação no ClickUp
+  // 3. Remover classes e atributos desnecessários, preservando as classes do Quill (ql-*)
   clone.querySelectorAll('*').forEach(el => {
+    const classesToKeep = [];
+    el.classList.forEach(cls => {
+      if (cls.startsWith('ql-')) {
+        classesToKeep.push(cls);
+      }
+    });
+    
     el.removeAttribute('class');
+    if (classesToKeep.length > 0) {
+      el.className = classesToKeep.join(' ');
+    }
     el.removeAttribute('contenteditable');
   });
 
@@ -555,8 +583,9 @@ export async function copyDiaryToClipboard(element) {
     return `#${rs}${gs}${bs}`;
   });
   
-  // Embrulhar em uma estrutura básica sem forçar cor preta global para não resetar no dark mode
-  const styledHTML = `<meta charset="utf-8"><div style="font-family: Arial, sans-serif;">${htmlContent}</div>`;
+  // Emular o formato de clipboard do Google Docs para liberar a aceitação de cores/estilos no ClickUp
+  const guid = 'docs-internal-guid-' + Math.random().toString(36).substring(2, 15);
+  const styledHTML = `<meta charset="utf-8"><b id="${guid}" style="font-weight:normal;">${htmlContent}</b>`;
 
   try {
     const blob = new Blob([styledHTML], { type: 'text/html' });
