@@ -645,8 +645,8 @@ function getTagClass(tagName) {
     return 'tag-purple';
   }
 
-  // Branding — Rosa
-  if (name === 'branding') {
+  // Branding e TRIB — Rosa
+  if (name === 'branding' || name === 'trib') {
     return 'tag-pink';
   }
 
