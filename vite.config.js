@@ -4,6 +4,7 @@ export default defineConfig({
   server: {
     port: process.env.PORT ? parseInt(process.env.PORT) : 5173,
     host: '0.0.0.0',
+    allowedHosts: true,
     proxy: {
       '/api/anthropic': {
         target: 'https://api.anthropic.com',
@@ -21,6 +22,7 @@ export default defineConfig({
   preview: {
     port: process.env.PORT ? parseInt(process.env.PORT) : 4173,
     host: '0.0.0.0',
+    allowedHosts: true,
     proxy: {
       '/api/anthropic': {
         target: 'https://api.anthropic.com',
