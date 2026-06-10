@@ -611,7 +611,7 @@ function getTagClass(tagName) {
   }
 
   // Verticais jurídicas — Azul forte
-  if (name === 'rev-pj' || name === 'rev-pf' || name === 'rev-pj/pf' || name === 'rd' || name === 'se' || name === 'lec' || name === 'dda') {
+  if (name === 'rev-pj' || name === 'rev-pf' || name === 'rev-pj/pf' || name === 'rd' || name === 'se' || name === 'lec' || name === 'dda' || name === 'trib') {
     return 'tag-blue';
   }
 
@@ -645,8 +645,8 @@ function getTagClass(tagName) {
     return 'tag-purple';
   }
 
-  // Branding e TRIB — Rosa
-  if (name === 'branding' || name === 'trib') {
+  // Branding — Rosa
+  if (name === 'branding') {
     return 'tag-pink';
   }
 
