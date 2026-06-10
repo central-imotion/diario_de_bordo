@@ -507,11 +507,8 @@ export async function copyDiaryToClipboard(element) {
     if (color) {
       const span = document.createElement('span');
       span.style.color = color;
-      
-      const strong = document.createElement('strong');
-      strong.textContent = el.textContent;
-      
-      span.appendChild(strong);
+      span.style.fontWeight = 'bold';
+      span.textContent = el.textContent;
       el.replaceWith(span);
     }
   });
@@ -531,13 +528,10 @@ export async function copyDiaryToClipboard(element) {
 
     const span = document.createElement('span');
     span.style.color = color;
+    span.style.fontWeight = 'bold';
+    span.textContent = el.textContent;
     
-    const strong = document.createElement('strong');
-    strong.textContent = el.textContent;
-    
-    span.appendChild(strong);
-    
-    // Se o elemento pai do el for um strong, substitui o strong pai para evitar strong duplicado
+    // Se o elemento pai do el for um strong, substitui o strong pai para evitar tags extras
     if (el.parentElement && el.parentElement.tagName === 'STRONG') {
       el.parentElement.replaceWith(span);
     } else {
@@ -561,8 +555,8 @@ export async function copyDiaryToClipboard(element) {
     return `#${rs}${gs}${bs}`;
   });
   
-  // Embrulhar em uma estrutura básica com utf-8
-  const styledHTML = `<meta charset="utf-8"><div style="font-family: Arial, sans-serif; font-size: 11pt; color: #000000;">${htmlContent}</div>`;
+  // Embrulhar em uma estrutura básica sem forçar cor preta global para não resetar no dark mode
+  const styledHTML = `<meta charset="utf-8"><div style="font-family: Arial, sans-serif;">${htmlContent}</div>`;
 
   try {
     const blob = new Blob([styledHTML], { type: 'text/html' });
