@@ -428,6 +428,8 @@ export function renderDiaryHTML(data) {
   if (data.alteracoes && data.alteracoes.length > 0) {
     // Agrupar alterações por chave de campanha (tag + plataforma + tipo)
     const campaignGroups = new Map();
+    const typesPerBrandPlat = new Map();
+
     data.alteracoes.forEach(alt => {
       const tNorm = normalizeTipoCampanha(alt.tipo_campanha);
       const key = `${alt.tag_campanha || ''}||${alt.plataforma || ''}||${tNorm || ''}`;
@@ -435,6 +437,15 @@ export function renderDiaryHTML(data) {
         campaignGroups.set(key, { tag: alt.tag_campanha, plataforma: alt.plataforma, tipoCampanha: tNorm, items: [] });
       }
       campaignGroups.get(key).items.push(alt);
+
+      // Mapear tipos únicos por tag/plataforma
+      const brandPlatKey = `${alt.tag_campanha || ''}||${alt.plataforma || ''}`;
+      if (!typesPerBrandPlat.has(brandPlatKey)) {
+        typesPerBrandPlat.set(brandPlatKey, new Set());
+      }
+      if (tNorm) {
+        typesPerBrandPlat.get(brandPlatKey).add(tNorm);
+      }
     });
 
     html += '<ul style="margin-top: 4px; padding-left: 20px;">';
@@ -443,15 +454,30 @@ export function renderDiaryHTML(data) {
       // Header da campanha (ex: "[REV-PJ] [Meta Ads] Na campanha de formulário:")
       const tagColor = getTagColor(group.tag);
       const tagH = group.tag
-        ? (tagColor ? `<strong style="color: ${tagColor};">${group.tag}</strong> ` : `<strong>${group.tag}</strong> `)
+        ? (tagColor ? `<strong style="color: ${tagColor};">${group.tag}</strong>` : `<strong>${group.tag}</strong>`)
         : '';
       const platColor = getTagColor(group.plataforma);
       const platH = group.plataforma
-        ? (platColor ? `<span style="color: ${platColor};">[${group.plataforma}]</span> ` : `[${group.plataforma}] `)
+        ? (platColor ? `<span style="color: ${platColor};">[${group.plataforma}]</span>` : `[${group.plataforma}]`)
         : '';
-      const tipoH = group.tipoCampanha ? `Na campanha de <u>${group.tipoCampanha}</u>` : '';
 
-      html += `<li style="margin-bottom: 8px;"><p>${tagH}${platH}${tipoH}:</p>`;
+      // Só exibe o tipo da campanha se houver mais de um tipo de campanha para esta marca/plataforma
+      const brandPlatKey = `${group.tag || ''}||${group.plataforma || ''}`;
+      const uniqueTypes = typesPerBrandPlat.get(brandPlatKey);
+      const hasMultipleTypes = uniqueTypes && uniqueTypes.size > 1;
+
+      const tipoH = (group.tipoCampanha && hasMultipleTypes)
+        ? `Na campanha de <u>${group.tipoCampanha}</u>`
+        : '';
+
+      const headerParts = [];
+      if (tagH) headerParts.push(tagH);
+      if (platH) headerParts.push(platH);
+      if (tipoH) headerParts.push(tipoH);
+
+      const headerText = headerParts.join(' ') + ':';
+
+      html += `<li style="margin-bottom: 8px;"><p>${headerText}</p>`;
       html += '<ul style="margin-top: 4px;">';
 
       group.items.forEach(alt => {

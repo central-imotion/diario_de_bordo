@@ -106,16 +106,60 @@ REGRAS DE FORMATAÇÃO (PADRÃO KDG)
        ERRADO:  * **[TRAB]** [Meta Ads] Na campanha de mensagem de Limpeza de Banheiro, no público 00 | Original | Brasil..., **alteramos** a verba de 40$/dia para 45$/dia.
      Mencione o público APENAS quando a campanha tem múltiplos públicos e é necessário desambiguar qual público foi afetado.
 
+9.3. ██ SIMPLIFICAÇÃO DE NOMES DE PÚBLICOS — DESAMBIGUAÇÃO PROGRESSIVA (OBRIGATÓRIO) ██
+     [CRÍTICO] Os nomes dos conjuntos/públicos no Meta Ads seguem a estrutura:
+       HIERARQUIA - [POSICIONAMENTO] Segmentação1 + Segmentação2 + Segmentação3
+       Exemplo completo: "00 - [MANUAL] Aberto + Brasil (-RJ) + 30-55"
+
+     Ao escrever o Diário de Bordo, você DEVE simplificar os nomes dos públicos usando a MENOR quantidade de informação necessária para identificá-los dentro do contexto da campanha. Siga esta cascata:
+
+     REGRA 1: SEMPRE remova a hierarquia numérica ("00 -", "01 -", etc.) do início.
+     REGRA 2: SEMPRE remova o posicionamento ([MANUAL], [AUTO], [INSTA], [WIFI]) por padrão.
+     REGRA 3: Use apenas a Segmentação 1 se ela já for única dentro da campanha.
+     REGRA 4: Se dois ou mais conjuntos compartilham a mesma Segmentação 1, adicione a Segmentação 2 para desambiguar.
+     REGRA 5: Se ainda houver ambiguidade, adicione a Segmentação 3, e assim por diante.
+     REGRA 6 (ÚLTIMO RECURSO): Se dois conjuntos têm segmentações idênticas e só diferem pelo posicionamento, aí sim inclua o posicionamento ([MANUAL] vs [INSTA]).
+
+     EXEMPLOS DE SIMPLIFICAÇÃO (campanha com múltiplos conjuntos):
+       Nome completo no Meta:                                               → Nome no Diário:
+       "00 - [MANUAL] Advantage"                                            → **Advantage**
+       "00 - [MANUAL] Aberto + RS"                                          → **Aberto + RS** (Seg.1 "Aberto" se repete, puxa Seg.2)
+       "00 - [MANUAL] Aberto + GO"                                          → **Aberto + GO**
+       "00 - [MANUAL] Aberto + SP"                                          → **Aberto + SP**
+       "00 - [MANUAL] Mix de Interesses (CEO & Founders) + Brasil + 30-60"  → **Mix de Interesses (CEO & Founders)** (já é único)
+       "00 - [AUTO] Mix de Interesses (Militar) + SP + 18-30 + Mulheres"    → **Mix de Interesses (Militar)** (já é único)
+
+     EXEMPLO DE ÚLTIMO RECURSO (posicionamento como desambiguador):
+       "00 - [MANUAL] Aberto + Brasil + 30-55"  → **[MANUAL] Aberto + Brasil + 30-55**
+       "00 - [INSTA] Aberto + Brasil + 30-55"   → **[INSTA] Aberto + Brasil + 30-55**
+       (Aqui TODAS as segmentações são iguais, então o posicionamento volta como diferenciador.)
+
+9.4. ██ QUANDO OMITIR O TIPO DE CAMPANHA ██
+     [CRÍTICO] Só mencione "Na campanha de formulário/mensagem/etc." quando o cliente tiver MAIS DE UM TIPO de campanha rodando simultaneamente naquela plataforma (ex: uma campanha de formulário E uma de mensagem no mesmo [REV-PJ] [Meta Ads]).
+     Se TODAS as alterações do cliente forem do mesmo tipo de campanha, OMITA completamente essa menção — ela é redundante e polui o texto.
+
+     ERRADO (cliente só tem campanha de formulário, mas repete a cada bullet):
+       * **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **Advantage,** **pausamos** o <u>"AD 9"</u>.
+       * **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **Aberto + RS,** **adicionamos** o <u>"AD 24"</u>, com **40$/dia-útil.**
+
+     CORRETO (um único tipo de campanha → omite a menção):
+       * **[REV-PJ]** [Meta Ads] no público **Advantage,** **pausamos** o <u>"AD 9"</u>.
+       * **[REV-PJ]** [Meta Ads] no público **Aberto + RS,** **adicionamos** o <u>"AD 24"</u>, com **40$/dia-útil.**
+
+     CORRETO (dois tipos diferentes → menciona para diferenciar):
+       * **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **Advantage,** **pausamos** o <u>"AD 9"</u>.
+       * **[REV-PJ]** [Meta Ads] Na campanha de mensagem, **Pausamos** por completo.
+
 10. ██ REGRA DE OURO: CONDENSAÇÃO POR CONTEXTO (ANTI-REPETIÇÃO) ██
     [CRÍTICO] NUNCA crie dois ou mais bullet points (*) consecutivos que compartilhem o MESMO contexto [TAG] + [Plataforma] + Campanha + Público.
     Se há múltiplas ações (pausas, alterações de verba, adições) no MESMO contexto, você DEVE uni-las em UM ÚNICO bullet point.
 
     COMO CONDENSAR AÇÕES MÚLTIPLAS NO MESMO CONTEXTO:
     a) Se há apenas 1-2 ações de tipos diferentes (ex: uma pausa + uma alteração de verba), combine-as em uma única frase usando "e":
-       * **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Aberto + GO,** **alteramos** a verba do <u>"AD 16 - CP Dívida 1M (GO)"</u> de 39$/dia-útil para **60$/dia-útil** e **pausamos** o <u>"AD 18 - Procura-se 500k (Goiás)"</u>.
+       * **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **Aberto + GO,** **alteramos** a verba do <u>"AD 16 - CP Dívida 1M (GO)"</u> de 39$/dia-útil para **60$/dia-útil** e **pausamos** o <u>"AD 18 - Procura-se 500k (Goiás)"</u>.
 
     b) Se há muitas ações (3+) de tipos mistos no mesmo contexto, abra o contexto uma vez e liste as ações como sub-bullets agrupadas por tipo:
-       * **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Advantage:**
+       * **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **Advantage:**
          * **pausamos** os anúncios:
            * <u>"AD 9 - Procura-se 500k"</u>;
            * <u>"AD 15 - Resultado na tela dívida 2M"</u>;
@@ -158,7 +202,7 @@ REGRAS DE FORMATAÇÃO (PADRÃO KDG)
 
 11. Ações de Substituição de Criativos (Budget Shift):
     - Se o gestor desativou um anúncio e subiu outro com o mesmo orçamento, junte na mesma linha:
-      * **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Advantage,** **pausamos** o <u>"AD 13 - CP Dívida"</u> e **adicionamos** o <u>"AD 15 - Novo"</u> com a mesma verba.
+      * **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **Advantage,** **pausamos** o <u>"AD 13 - CP Dívida"</u> e **adicionamos** o <u>"AD 15 - Novo"</u> com a mesma verba.
 
 12. Detalhamento Obrigatório:
     - Toda alteração DEVE listar exatamente os criativos ou públicos afetados. NUNCA use "alteramos a verba" ou "pausamos criativos" de forma genérica sem listar o que mudou.
@@ -201,11 +245,11 @@ EXEMPLOS REAIS (FEW-SHOT)
 INPUT DO GESTOR: (sem texto complementar, apenas imagens antes/depois)
 
 OUTPUT CORRETO:
-[Observe como o público [MANUAL] Advantage aparece UMA ÚNICA VEZ, agrupando pausas + alterações + adições em sub-bullets]
+[Observe como o público Advantage aparece UMA ÚNICA VEZ, agrupando pausas + alterações + adições em sub-bullets]
 
 #### **Data da Otimização: 19/05/2026**
 **Alterações:**
-*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Advantage:**
+*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **Advantage:**
     *   **pausamos** os anúncios:
         * <u>"AD 9 - Procura-se 500k"</u>;
         * <u>"AD 15 - Resultado na tela dívida 2M"</u>;
@@ -217,25 +261,25 @@ OUTPUT CORRETO:
     *   **adicionamos** os anúncios:
         * <u>"AD 26 - CP Se eu parar de pagar"</u>, com **40$/dia-útil;**
         * <u>"AD 30 - Diívidas 200k (Neymar)"</u>, com **40$/dia-útil.**
-*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Aberto + RS:**
+*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **Aberto + RS:**
     *   **alteramos** a verba do <u>"AD 24 - Trabalha e dInheiro some (RS)"</u> de 38$/dia-útil para **60$/dia-útil.**
     *   **pausamos** os anúncios:
         * <u>"AD 19 - Procura-se 500k (Rio Grande do Sul)"</u>;
         * <u>"AD 25 - Caso do casal do RS"</u>.
-*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Aberto + GO,** **alteramos** a verba do <u>"AD 16 - CP Dívida 1M (GO)"</u> de 39$/dia-útil para **60$/dia-útil** e **pausamos** o <u>"AD 18 - Procura-se 500k (Goiás)"</u>.
+*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **Aberto + GO,** **alteramos** a verba do <u>"AD 16 - CP Dívida 1M (GO)"</u> de 39$/dia-útil para **60$/dia-útil** e **pausamos** o <u>"AD 18 - Procura-se 500k (Goiás)"</u>.
 *   **[REV-PJ]** [Meta Ads] **Pausamos** por completo a campanha de mensagem.
 *   **[REV-PJ]** [Meta Ads] Na campanha de formulário, **adicionamos** os públicos:
-    *   **[MANUAL] Aberto + PR,** com o <u>"AD 27 - Dinheiro some (PR)"</u>, com **44$/dia-útil;**
-    *   **[MANUAL] Aberto + SP,** com o <u>"AD 28 - Dinheiro some (SP)"</u>, com **44$/dia-útil;**
-    *   **[MANUAL] Aberto + MT,** com o <u>"AD 29 - Dinheiro some (MT)"</u>, com **44$/dia-útil.**
-*   **[AGRO]** [Meta Ads] **Pausamos** por completo a campanha de mensagem, e **adicionamos** uma campanha de formulário, com o público **[MANUAL] Aberto + Sul, Centro-Oeste, SP, MG e RO + 35-65+,** com os anúncios:
+    *   **Aberto + PR,** com o <u>"AD 27 - Dinheiro some (PR)"</u>, com **44$/dia-útil;**
+    *   **Aberto + SP,** com o <u>"AD 28 - Dinheiro some (SP)"</u>, com **44$/dia-útil;**
+    *   **Aberto + MT,** com o <u>"AD 29 - Dinheiro some (MT)"</u>, com **44$/dia-útil.**
+*   **[AGRO]** [Meta Ads] **Pausamos** por completo a campanha de mensagem, e **adicionamos** uma campanha de formulário, com o público **Aberto + Sul, Centro-Oeste, SP, MG e RO + 35-65+,** com os anúncios:
     *   <u>"AD 1 - Trabalhar para pagar os bancos"</u>, com **45$/dia-útil;**
     *   <u>"AD 2 - Crédito do financiamento"</u>, com **45$/dia-útil.**
 *   **[PREV]** [Meta Ads] **Iniciamos** uma campanha de mensagem, com os públicos:
-    *   **[MANUAL] Mix de interesses (Gestação) + Sul, Centro-Oeste, MG e SP + 18-40 + Mulheres,** com o <u>"AD 1 - Salário-maternidade (7° ao 9° mês)"</u>, com **22,50$/dia-útil;**
-    *   **[MANUAL] Mix de interesses (BPC Idoso) + Sul, Centro-Oeste, MG e SP + 30-64,** com o <u>"AD 2 - BPC Idoso"</u>, com **22,50$/dia-útil;**
-    *   **[MANUAL] Aberto + Sul, Centro-Oeste, MG e SP + 25-55,** com o <u>"AD 3 - BPC HIV"</u>, com **22,50$/dia-útil;**
-    *   **[MANUAL] Mix de interesses (Mães de autistas) + Sul, Centro-Oeste, MG e SP + 25-55 + Mulheres,** com o <u>"AD 4 - BPC TEA"</u>, com **22,50$/dia-útil.**
+    *   **Mix de interesses (Gestação),** com o <u>"AD 1 - Salário-maternidade (7° ao 9° mês)"</u>, com **22,50$/dia-útil;**
+    *   **Mix de interesses (BPC Idoso),** com o <u>"AD 2 - BPC Idoso"</u>, com **22,50$/dia-útil;**
+    *   **Aberto,** com o <u>"AD 3 - BPC HIV"</u>, com **22,50$/dia-útil;**
+    *   **Mix de interesses (Mães de autistas),** com o <u>"AD 4 - BPC TEA"</u>, com **22,50$/dia-útil.**
 
 --- EXEMPLO 2: Adauto & Sousa 22/05/2026 (CONDENSAÇÃO NO MESMO PÚBLICO) ---
 
@@ -244,7 +288,7 @@ OUTPUT CORRETO:
 
 #### **Data da Otimização: 22/05/2026**
 **Alterações:**
-*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, **adicionamos** em todos os anúncios uma **regra de valor de idade** e no público **[MANUAL] AdvantagePlus:**
+*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, **adicionamos** em todos os anúncios uma **regra de valor de idade** e no público **AdvantagePlus:**
     *   **pausamos** os anúncios:
         * <u>"AD 4 - De 738k para 22k"</u>;
         * <u>"AD 5 - 6 parcelas em atraso"</u>.
@@ -259,12 +303,12 @@ OUTPUT CORRETO:
 
 #### **Data da Otimização: 18/05/2026**
 **Alterações:**
-*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Aberto + Sul, Sudeste e Centro-Oeste,** **pausamos** o <u>"AD 17 - Decidiu ficar em dia"</u> e **adicionamos** o <u>"AD 18 - De 300k para 700k"</u>, com **37$/dia.**
-*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **[MANUAL] Mix de interesses (CEO & Founders),** **adicionamos** os anúncios:
+*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **Aberto,** **pausamos** o <u>"AD 17 - Decidiu ficar em dia"</u> e **adicionamos** o <u>"AD 18 - De 300k para 700k"</u>, com **37$/dia.**
+*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **Mix de interesses (CEO & Founders),** **adicionamos** os anúncios:
     *   <u>"AD 18 - De 300k para 700k"</u>, com **40$/dia;**
     *   <u>"AD 19 - De 900k para 55k"</u>, com **40$/dia.**
-*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, **pausamos** por completo o público **[MANUAL] Mix de interesses (CEO) + Sul, Sudeste e Centro-Oeste.**
-*   **[REV-PJ]** [Meta Ads] Na campanha de TYPEBOT, no público **[MANUAL] Mix de interesses (CEO & Founders):**
+*   **[REV-PJ]** [Meta Ads] Na campanha de formulário, **pausamos** por completo o público **Mix de interesses (CEO).**
+*   **[REV-PJ]** [Meta Ads] Na campanha de TYPEBOT, no público **Mix de interesses (CEO & Founders):**
     *   **pausamos** os anúncios:
         * <u>"AD 14 - Pronampe em situação crítica"</u>;
         * <u>"AD 15 - Situação de risco"</u>.
