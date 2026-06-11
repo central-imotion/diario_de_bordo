@@ -472,13 +472,6 @@ export function renderDiaryHTML(data) {
     html += '</ul>';
   }
 
-  // --- Seção "Visão Geral" (placeholder — as imagens o gestor sobe manualmente) ---
-  html += `<p style="margin-top: 16px;"><strong><u>Visão Geral do Mapa de Campanhas</u>:</strong></p>`;
-  html += `<p style="margin-top: 4px;">Resultados</p>`;
-  html += `<p style="color: #888; font-style: italic;">[Imagem de resultados — anexada pelo gestor]</p>`;
-  html += `<p style="margin-top: 8px;">Como Ficou</p>`;
-  html += `<p style="color: #888; font-style: italic;">[Imagem do mapa atualizado — anexada pelo gestor]</p>`;
-
   return html;
 }
 

@@ -192,14 +192,6 @@ Sempre gere o output EXATAMENTE neste formato:
 **Alterações:**
 *   [bullet points de alterações]
 
-**Visão Geral do Mapa de Campanhas:**
-
-Resultados
-[Imagem de resultados — anexada pelo gestor]
-
-Como Ficou
-[Imagem do mapa atualizado — anexada pelo gestor]
-
 ═══════════════════════════════════════════
 EXEMPLOS REAIS (FEW-SHOT)
 ═══════════════════════════════════════════
@@ -245,14 +237,6 @@ OUTPUT CORRETO:
     *   **[MANUAL] Aberto + Sul, Centro-Oeste, MG e SP + 25-55,** com o <u>"AD 3 - BPC HIV"</u>, com **22,50$/dia-útil;**
     *   **[MANUAL] Mix de interesses (Mães de autistas) + Sul, Centro-Oeste, MG e SP + 25-55 + Mulheres,** com o <u>"AD 4 - BPC TEA"</u>, com **22,50$/dia-útil.**
 
-**Visão Geral do Mapa de Campanhas:**
-
-Resultados
-[Imagem de resultados — anexada pelo gestor]
-
-Como Ficou
-[Imagem do mapa atualizado — anexada pelo gestor]
-
 --- EXEMPLO 2: Adauto & Sousa 22/05/2026 (CONDENSAÇÃO NO MESMO PÚBLICO) ---
 
 OUTPUT CORRETO:
@@ -267,14 +251,6 @@ OUTPUT CORRETO:
     *   **adicionamos** os anúncios:
         * <u>"AD 7 - CP Banco bloquear as contas"</u>, com **36$/dia-útil;**
         * <u>"AD 8 - CP Parcela do Pronampe subiu"</u>, com **36$/dia-útil.**
-
-**Visão Geral do Mapa de Campanhas:**
-
-Resultados
-[Imagem de resultados — anexada pelo gestor]
-
-Como Ficou
-[Imagem do mapa atualizado — anexada pelo gestor]
 
 --- EXEMPLO 3: Costa Mazzini 18/05/2026 (CONDENSAÇÃO MULTI-CAMPANHA) ---
 
@@ -295,14 +271,6 @@ OUTPUT CORRETO:
     *   **adicionamos** os anúncios:
         * <u>"AD 18 - De 300k para 700k"</u>, com **45$/dia;**
         * <u>"AD 19 - De 900k para 55k"</u>, com **45$/dia.**
-
-**Visão Geral do Mapa de Campanhas:**
-
-Resultados
-[Imagem de resultados — anexada pelo gestor]
-
-Como Ficou
-[Imagem do mapa atualizado — anexada pelo gestor]
 
 ═══════════════════════════════════════════
 INSTRUÇÕES FINAIS
