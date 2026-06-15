@@ -30,7 +30,9 @@ ARQUITETURA DO MAPA E DETECÇÃO DE ALTERAÇÕES
    - O que era um nó ativo de campanha, público ou anúncio no ANTES mas desapareceu no DEPOIS = foi pausado/removido.
    - O que não existia no ANTES mas passou a existir no DEPOIS = foi adicionado/novo.
    - Nós de anúncios/conjuntos que continuam em ambos os estados mas tiveram seu valor de verba editado = alteração de verba.
-   - Todo anúncio (AD) possui seu próprio orçamento individual. Não existe conceito de CBO ou ABO no contexto deste relatório.
+   - Conjuntos podem operar em dois modelos de orçamento — detecte pelo mapa mental:
+     • **ABO** (Ad Budget Optimization): o valor de verba aparece no nó do próprio AD. Cada AD tem orçamento individual.
+     • **CBO** (Campaign Budget Optimization): o valor de verba aparece no nó do Conjunto/Público, não nos ADs individualmente.
    - Estrutura de campanhas pode incluir tags como [REV-PJ], [AGRO], [PREV], [BRANDING], [LEC], [SE] etc. e plataformas Meta Ads ou Google Ads.
 
 ═══════════════════════════════════════════
@@ -134,7 +136,24 @@ REGRAS DE FORMATAÇÃO (PADRÃO KDG)
        "00 - [INSTA] Aberto + Brasil + 30-55"   → **[INSTA] Aberto + Brasil + 30-55**
        (Aqui TODAS as segmentações são iguais, então o posicionamento volta como diferenciador.)
 
-9.4. ██ QUANDO OMITIR O TIPO DE CAMPANHA ██
+9.4. ██ CONJUNTOS CBO vs ABO COM MESMO PÚBLICO ██
+     Quando uma campanha tem dois conjuntos com a mesma segmentação/público, sendo um CBO e outro ABO, é PROIBIDO criar dois bullets separados repetindo o contexto completo. Agrupe em UM único bullet e use sub-bullets com o label **(ABO)** ou **(CBO)** para diferenciar.
+
+     ERRADO (contexto repetido duas vezes):
+     * **[SE]** [Meta Ads] no público **Mix de Interesses (Servidor Público),** com verba de 25$/dia, **Diminuímos** a verba do <u>"AD 4 - Três formas"</u> de 25$/dia para **15$/dia.**
+     * **[SE]** [Meta Ads] no público **Mix de Interesses (Servidor Público),** com verba de 68$/dia, **Diminuímos** a verba do <u>"AD 4 - Três formas"</u> de 68$/dia para **50$/dia.**
+
+     CORRETO (contexto aberto uma vez, distinção por CBO/ABO nos sub-bullets):
+     * **[SE]** [Meta Ads] no público **Mix de Interesses (Servidor Público),** **Diminuímos** a verba do <u>"AD 4 - Três formas"</u>:
+         * de 25$/dia para **15$/dia** (ABO);
+         * de 68$/dia para **50$/dia** (CBO).
+
+     Se as ações nos dois conjuntos forem diferentes (ex: uma pausa em ABO e uma adição em CBO), abra o contexto e liste cada ação com seu label:
+     * **[SE]** [Meta Ads] no público **Mix de Interesses (Servidor Público):**
+         * (ABO) **pausamos** o <u>"AD 4 - Três formas"</u>;
+         * (CBO) **adicionamos** o <u>"AD 9 - Storytelling"</u>, com **30$/dia.**
+
+9.5. ██ QUANDO OMITIR O TIPO DE CAMPANHA ██
      [CRÍTICO] Só mencione "Na campanha de formulário/mensagem/etc." quando o cliente tiver MAIS DE UM TIPO de campanha rodando simultaneamente naquela plataforma (ex: uma campanha de formulário E uma de mensagem no mesmo [REV-PJ] [Meta Ads]).
      Se TODAS as alterações do cliente forem do mesmo tipo de campanha, OMITA completamente essa menção — ela é redundante e polui o texto.
 
