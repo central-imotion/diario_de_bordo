@@ -264,7 +264,8 @@ Para CADA campanha visível, extraia e liste de forma objetiva:
 
 Cruze as fatias de Zoom Alta Resolução com a Visão Geral para extrair nomes e valores corretamente.
 
-Responda APENAS com a extração textual estruturada. Não gere o diário final ainda.`
+Responda APENAS com a extração textual estruturada. Não gere o diário final ainda.`,
+          cache_control: { type: 'ephemeral' }
         }
       ];
 
@@ -285,6 +286,7 @@ Responda APENAS com a extração textual estruturada. Não gere o diário final 
           'content-type': 'application/json',
           'x-api-key': anthropicKey,
           'anthropic-version': '2023-06-01',
+          'anthropic-beta': 'prompt-caching-2024-07-31',
           'anthropic-dangerous-direct-browser-access': 'true'
         },
         body: JSON.stringify({
@@ -324,7 +326,8 @@ Para CADA campanha visível, extraia e liste de forma objetiva:
 
 Cruze as fatias de Zoom Alta Resolução com a Visão Geral para extrair nomes e valores corretamente.
 
-Responda APENAS com a extração textual estruturada. Não gere o diário final ainda.`
+Responda APENAS com a extração textual estruturada. Não gere o diário final ainda.`,
+          cache_control: { type: 'ephemeral' }
         }
       ];
 
@@ -345,6 +348,7 @@ Responda APENAS com a extração textual estruturada. Não gere o diário final 
           'content-type': 'application/json',
           'x-api-key': anthropicKey,
           'anthropic-version': '2023-06-01',
+          'anthropic-beta': 'prompt-caching-2024-07-31',
           'anthropic-dangerous-direct-browser-access': 'true'
         },
         body: JSON.stringify({
@@ -395,12 +399,19 @@ Data da otimização: ${today}
           'content-type': 'application/json',
           'x-api-key': anthropicKey,
           'anthropic-version': '2023-06-01',
+          'anthropic-beta': 'prompt-caching-2024-07-31',
           'anthropic-dangerous-direct-browser-access': 'true'
         },
         body: JSON.stringify({
           model: 'claude-sonnet-4-6',
           max_tokens: 4096,
-          system: SYSTEM_PROMPT,
+          system: [
+            {
+              type: 'text',
+              text: SYSTEM_PROMPT,
+              cache_control: { type: 'ephemeral' }
+            }
+          ],
           messages: [{ role: 'user', content: mergePrompt }]
         })
       });
