@@ -137,18 +137,28 @@ REGRAS DE FORMATAÇÃO (PADRÃO KDG)
        (Aqui TODAS as segmentações são iguais, então o posicionamento volta como diferenciador.)
 
 9.4. ██ CONJUNTOS CBO vs ABO COM MESMO PÚBLICO ██
-     Quando uma campanha tem dois conjuntos com a mesma segmentação/público, sendo um CBO e outro ABO, é PROIBIDO criar dois bullets separados repetindo o contexto completo. Agrupe em UM único bullet e use sub-bullets com o label **(ABO)** ou **(CBO)** para diferenciar.
+     [CRÍTICO] Quando o MESMO nome de público/segmentação aparece duas vezes na mesma campanha com valores de verba distintos, isso NÃO significa que são dois públicos diferentes — significa que existem dois conjuntos distintos com a mesma segmentação, um operando em ABO (verba por AD) e outro em CBO (verba por conjunto).
 
-     ERRADO (contexto repetido duas vezes):
-     * **[SE]** [Meta Ads] no público **Mix de Interesses (Servidor Público),** com verba de 25$/dia, **Diminuímos** a verba do <u>"AD 4 - Três formas"</u> de 25$/dia para **15$/dia.**
-     * **[SE]** [Meta Ads] no público **Mix de Interesses (Servidor Público),** com verba de 68$/dia, **Diminuímos** a verba do <u>"AD 4 - Três formas"</u> de 68$/dia para **50$/dia.**
+     REGRA INVIOLÁVEL: Nesses casos, você DEVE:
+     1. Tratar como UM ÚNICO bullet (mesmo público).
+     2. Escrever o label **(ABO)** ou **(CBO)** explicitamente em cada sub-bullet — eles NUNCA podem ser omitidos.
+     3. NUNCA escrever "verba dos públicos" no plural — é o MESMO público.
 
-     CORRETO (contexto aberto uma vez, distinção por CBO/ABO nos sub-bullets):
+     ERRADO — dois bullets separados (proibido):
+     * **[SE]** [Meta Ads] no público **Mix de Interesses (Servidor Público),** **Diminuímos** a verba do <u>"AD 4 - Três formas"</u> de 25$/dia para **15$/dia.**
+     * **[SE]** [Meta Ads] no público **Mix de Interesses (Servidor Público),** **Diminuímos** a verba do <u>"AD 4 - Três formas"</u> de 68$/dia para **50$/dia.**
+
+     ERRADO — agrupado mas sem os labels (proibido):
+     * **[SE]** [Meta Ads] Na campanha de mensagem, **Diminuímos** a verba dos públicos:
+         * Mix de Interesses (Servidor Público) de 25$/dia para **15$/dia;**
+         * Mix de Interesses (Servidor Público) de 68$/dia para **50$/dia.**
+
+     CORRETO — agrupado com labels (ABO) e (CBO) obrigatórios:
      * **[SE]** [Meta Ads] no público **Mix de Interesses (Servidor Público),** **Diminuímos** a verba do <u>"AD 4 - Três formas"</u>:
          * de 25$/dia para **15$/dia** (ABO);
          * de 68$/dia para **50$/dia** (CBO).
 
-     Se as ações nos dois conjuntos forem diferentes (ex: uma pausa em ABO e uma adição em CBO), abra o contexto e liste cada ação com seu label:
+     Se as ações nos dois conjuntos forem diferentes, abra o contexto e use os labels na frente do verbo:
      * **[SE]** [Meta Ads] no público **Mix de Interesses (Servidor Público):**
          * (ABO) **pausamos** o <u>"AD 4 - Três formas"</u>;
          * (CBO) **adicionamos** o <u>"AD 9 - Storytelling"</u>, com **30$/dia.**
