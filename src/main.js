@@ -4,6 +4,8 @@
 
 import { analyzeImages } from './ai-service.js';
 import { copyDiaryToClipboard } from './editor.js';
+import { getTagColor } from './tag-config.js';
+import { initTagColorEditor, openTagColorEditor } from './tag-color-editor.js';
 import './styles.css';
 
 
@@ -31,10 +33,15 @@ const fileInput = document.getElementById('file-input');
 
 // --- Init ---
 function init() {
+  initTagColorEditor();
+
   btnAttach.addEventListener('click', () => fileInput.click());
   fileInput.addEventListener('change', handleFileSelect);
   btnSend.addEventListener('click', handleSend);
   btnNewChat.addEventListener('click', handleNewChat);
+
+  const btnTagColors = document.getElementById('btn-tag-colors');
+  if (btnTagColors) btnTagColors.addEventListener('click', openTagColorEditor);
 
   messageInput.addEventListener('input', () => {
     autoResizeTextarea();
@@ -578,79 +585,19 @@ function markdownToHTML(md) {
   let finalHTML = thinkingHTML + outputLines.join('\n');
 
   // Pós-processamento: colorir TODAS as tags [TAG] no HTML final
-  // Roda por último para garantir que tags dentro de <strong> etc. sejam capturadas
+  // Sempre cria um span com data-tag-key para permitir recoloração retroativa
   finalHTML = finalHTML.replace(/\[(?!MANUAL\b)([^\]<>]+)\]/g, (match, p1) => {
-    // Ignorar se já está dentro de um span (evitar re-processar)
-    // Ignorar se faz parte de atributo HTML
-    const cls = getTagClass(p1);
-    if (cls) {
-      return `<span class="tag-highlight ${cls}">[${p1}]</span>`;
+    const key = p1.toLowerCase().trim();
+    const color = getTagColor(p1);
+    if (color) {
+      return `<span class="tag-highlight" style="color:${color}" data-color="${color}" data-tag-key="${key}">[${p1}]</span>`;
     }
-    return match;
+    return `<span data-tag-key="${key}">[${p1}]</span>`;
   });
 
   return finalHTML;
 }
 
-function getTagClass(tagName) {
-  const name = tagName.toLowerCase().trim();
-
-  // Plataformas — Azul claro
-  if (name === 'meta ads' || name === 'meta' || name === 'google ads' || name === 'google') {
-    return 'tag-platform';
-  }
-
-  // Verticais jurídicas — Azul forte
-  if (name === 'rev-pj' || name === 'rev-pf' || name === 'rev-pj/pf' || name === 'rd' || name === 'se' || name === 'lec' || name === 'dda' || name === 'trib') {
-    return 'tag-blue';
-  }
-
-  // TRAB — Laranja/Amber
-  if (name === 'trab') {
-    return 'tag-orange';
-  }
-
-  // FRAUDE — Vermelho/Coral
-  if (name === 'fraude') {
-    return 'tag-red';
-  }
-
-  // LEADS — Verde
-  if (name === 'leads') {
-    return 'tag-green';
-  }
-
-  // ENG / NPS — Ciano/Teal
-  if (name === 'eng' || name === 'nps') {
-    return 'tag-teal';
-  }
-
-  // AGRO — Amarelo/Amber
-  if (name === 'agro') {
-    return 'tag-yellow';
-  }
-
-  // PREV — Roxo
-  if (name === 'prev') {
-    return 'tag-purple';
-  }
-
-  // Branding — Rosa
-  if (name === 'branding') {
-    return 'tag-pink';
-  }
-
-  // Abono de Permanencia, Professores-Hor, DF, RCH
-  if (name === 'abono de permanencia' || name === 'abono de permanência') {
-    return 'tag-teal';
-  }
-  if (name.startsWith('professores') || name === 'df' || name === 'rch') {
-    return 'tag-purple';
-  }
-
-  // Tags desconhecidas (AUTO, INSTA, AD, CBO, etc.) — SEM cor
-  return null;
-}
 
 /**
  * Processa formatação inline: **bold**, <u>underline</u>

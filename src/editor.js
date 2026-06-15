@@ -3,6 +3,8 @@
    ZERO IA. Tudo é template engine em JS puro.
    ============================================ */
 
+import { getTagColor } from './tag-config.js';
+
 // =============================================
 // CORES POR TIPO DE AÇÃO (Padrão KDG)
 // =============================================
@@ -22,32 +24,6 @@ const ACTION_COLORS = {
   isolamento: '#99543a',
   transformacao: '#99543a',
 };
-
-function getTagColor(tagText) {
-  const clean = (tagText || '').replace(/[\[\]]/g, '').toLowerCase().trim();
-  // Campaign verticals — Blue (KDG ClickUp azureBlue1000)
-  if (clean === 'rev-pj' || clean === 'rd' || clean === 'se' || clean === 'lec') {
-    return '#0b68cb';
-  }
-  // Platforms — Blue
-  if (clean === 'meta ads' || clean === 'google ads') {
-    return '#0b68cb';
-  }
-  // AGRO — Yellow (KDG ClickUp yellow1000)
-  if (clean === 'agro') {
-    return '#915930';
-  }
-  // PREV — Purple (KDG ClickUp purple1000)
-  if (clean === 'prev') {
-    return '#5a43d6';
-  }
-  // Branding — Pink (KDG ClickUp pink800)
-  if (clean === 'branding') {
-    return '#e93d82';
-  }
-  // Unrecognized tags — no color
-  return null;
-}
 
 function getActionColor(tipo) {
   return ACTION_COLORS[(tipo || '').toLowerCase()] || '#0b68cb';
@@ -504,6 +480,18 @@ export function renderDiaryHTML(data) {
 // =============================================
 // CLIPBOARD — Copiar como Rich Text
 // =============================================
+
+function hexToQuillColorName(hex) {
+  const h = (hex || '').toLowerCase();
+  if (h.includes('ef53') || h.includes('f851') || h.includes('dc26') || h.includes('f439')) return 'red';
+  if (h.includes('18794') || h.includes('66bb') || h.includes('2ea4')) return 'green';
+  if (h.includes('4dd0') || h.includes('0e74')) return 'teal';
+  if (h.includes('ffb7') || h.includes('d494') || h.includes('b453') || h.includes('99543')) return 'orange';
+  if (h.includes('9b8a') || h.includes('5a43') || h.includes('9b8afb')) return 'purple';
+  if (h.includes('f472') || h.includes('e93d')) return 'pink';
+  return 'blue';
+}
+
 export async function copyDiaryToClipboard(element) {
   if (!element) return;
 
@@ -544,20 +532,10 @@ export async function copyDiaryToClipboard(element) {
     }
   });
 
-  // 2. Converter tags coloridas (.tag-highlight)
+  // 2. Converter tags coloridas (.tag-highlight) — lê data-color para ser agnóstico ao config
   clone.querySelectorAll('.tag-highlight').forEach(el => {
-    let qlColor = 'blue'; // default
-    let styleColor = '#0b68cb';
-    
-    if (el.classList.contains('tag-blue')) { qlColor = 'blue'; styleColor = '#0b68cb'; }
-    else if (el.classList.contains('tag-platform')) { qlColor = 'blue'; styleColor = '#0b68cb'; }
-    else if (el.classList.contains('tag-orange')) { qlColor = 'orange'; styleColor = '#b45309'; }
-    else if (el.classList.contains('tag-red')) { qlColor = 'red'; styleColor = '#dc2626'; }
-    else if (el.classList.contains('tag-green')) { qlColor = 'green'; styleColor = '#18794e'; }
-    else if (el.classList.contains('tag-teal')) { qlColor = 'teal'; styleColor = '#0e7490'; }
-    else if (el.classList.contains('tag-yellow')) { qlColor = 'yellow'; styleColor = '#915930'; }
-    else if (el.classList.contains('tag-purple')) { qlColor = 'purple'; styleColor = '#5a43d6'; }
-    else if (el.classList.contains('tag-pink')) { qlColor = 'pink'; styleColor = '#e93d82'; }
+    const styleColor = el.dataset.color || el.style.color || '#0b68cb';
+    const qlColor = hexToQuillColorName(styleColor);
 
     const strong = document.createElement('strong');
     const span = document.createElement('span');
@@ -565,10 +543,9 @@ export async function copyDiaryToClipboard(element) {
     span.setAttribute('data-test', `ql-text-color-${qlColor}`);
     span.style.color = styleColor;
     span.textContent = el.textContent;
-    
+
     strong.appendChild(span);
-    
-    // Se o elemento pai do el for um strong, substitui o strong pai para evitar tags extras
+
     if (el.parentElement && el.parentElement.tagName === 'STRONG') {
       el.parentElement.replaceWith(strong);
     } else {
@@ -627,22 +604,13 @@ export async function copyDiaryToClipboard(element) {
     element.querySelectorAll('.action-positive, .action-negative, .action-neutral, .tag-highlight').forEach(el => {
       const originalStyle = el.getAttribute('style') || '';
       originalSpans.push({ el, originalStyle });
-      
+
       let color = '';
       if (el.classList.contains('action-positive')) color = '#18794e';
       else if (el.classList.contains('action-negative')) color = '#f43932';
       else if (el.classList.contains('action-neutral')) color = '#99543a';
-      else if (el.classList.contains('tag-blue')) color = '#0b68cb';
-      else if (el.classList.contains('tag-platform')) color = '#0b68cb';
-      else if (el.classList.contains('tag-orange')) color = '#b45309';
-      else if (el.classList.contains('tag-red')) color = '#dc2626';
-      else if (el.classList.contains('tag-green')) color = '#18794e';
-      else if (el.classList.contains('tag-teal')) color = '#0e7490';
-      else if (el.classList.contains('tag-yellow')) color = '#915930';
-      else if (el.classList.contains('tag-purple')) color = '#5a43d6';
-      else if (el.classList.contains('tag-pink')) color = '#e93d82';
-      else if (el.classList.contains('tag-highlight')) color = '#0b68cb';
-      
+      else if (el.classList.contains('tag-highlight')) color = el.dataset.color || el.style.color || '#0b68cb';
+
       if (color) {
         el.style.color = color;
         el.style.fontWeight = 'bold';
