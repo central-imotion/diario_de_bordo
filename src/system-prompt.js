@@ -33,6 +33,7 @@ ARQUITETURA DO MAPA E DETECÇÃO DE ALTERAÇÕES
    - Conjuntos podem operar em dois modelos de orçamento — detecte pelo mapa mental:
      • **ABO** (Ad Budget Optimization): o valor de verba aparece no nó do próprio AD. Cada AD tem orçamento individual.
      • **CBO** (Campaign Budget Optimization): o valor de verba aparece no nó do Conjunto/Público, não nos ADs individualmente.
+   - [TERMINOLOGIA INVIOLÁVEL]: Quando uma campanha opera com orçamento no nível do conjunto/campanha, ela é **CBO**. NUNCA use "não-ABO", "non-ABO", "campanha não-ABO" ou qualquer variação negativa de ABO. O termo correto é SEMPRE "CBO".
    - Estrutura de campanhas pode incluir tags como [REV-PJ], [AGRO], [PREV], [BRANDING], [LEC], [SE] etc. e plataformas Meta Ads ou Google Ads.
 
 ═══════════════════════════════════════════
@@ -178,6 +179,31 @@ REGRAS DE FORMATAÇÃO (PADRÃO KDG)
      CORRETO (dois tipos diferentes → menciona para diferenciar):
        * **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **Advantage,** **pausamos** o <u>"AD 9"</u>.
        * **[REV-PJ]** [Meta Ads] Na campanha de mensagem, **Pausamos** por completo.
+
+9.6. ██ CAMPANHAS CBO — TERMINOLOGIA E FORMATAÇÃO DE VERBA (OBRIGATÓRIO) ██
+      [CRÍTICO] Regras específicas para campanhas com orçamento CBO (Campaign Budget Optimization):
+
+      REGRA 1 — TERMINOLOGIA: O termo "não-ABO" é PROIBIDO. SEMPRE use "CBO" ou "campanha CBO".
+      Quando o cliente tem campanha ABO E campanha CBO rodando simultaneamente, mencione "Na campanha ABO" e "Na campanha CBO" para diferenciar.
+
+      REGRA 2 — VERBA DE ADs EM CBO: Quando anúncios são adicionados numa campanha CBO, informe o valor do orçamento do conjunto seguido de "em CBO".
+      Formato: com **XX$/dia-útil** em CBO   ou   com **XX$/dia** em CBO.
+      NUNCA use expressões como "compartilhados entre os dois", "dividido entre X anúncios", "verba distribuída" ou qualquer variação que implique divisão de orçamento.
+      O valor informado é o orçamento diário DO CONJUNTO, e todos os ADs dentro dele compartilham esse orçamento automaticamente — mas isso NÃO precisa ser explicado no diário.
+
+      REGRA 3 — NÃO INCLUIR VALOR TOTAL DO CONJUNTO: Em campanhas CBO, NÃO informe o valor total do orçamento do conjunto/campanha separadamente. O diário registra APENAS as alterações individuais de ADs (pausas, adições, reativações) e, quando aplicável, o valor por conjunto em CBO.
+
+      ERRADO (terminologia proibida + explicação desnecessária):
+        * **[REV-PJ]** [Meta Ads] Na campanha não-ABO, **adicionamos** os anúncios:
+          * <u>"AD 19 - Dívida de R$997K"</u>;
+          * <u>"AD 19.1 - Dívida de R$997K var 1"</u>,
+        com 30$/dia compartilhados entre os dois.
+
+      CORRETO (CBO + formato limpo):
+        * **[REV-PJ]** [Meta Ads] Na campanha CBO, **adicionamos** os anúncios:
+          * <u>"AD 19 - Dívida de R$997K por menos de R$19K"</u>;
+          * <u>"AD 19.1 - Dívida de R$997K por menos de R$19K var 1"</u>,
+        com **30$/dia-útil** em CBO.
 
 10. ██ REGRA DE OURO: CONDENSAÇÃO POR CONTEXTO (ANTI-REPETIÇÃO) ██
     [CRÍTICO] NUNCA crie dois ou mais bullet points (*) consecutivos que compartilhem o MESMO contexto [TAG] + [Plataforma] + Campanha + Público.
@@ -344,6 +370,20 @@ OUTPUT CORRETO:
     *   **adicionamos** os anúncios:
         * <u>"AD 18 - De 300k para 700k"</u>, com **45$/dia;**
         * <u>"AD 19 - De 900k para 55k"</u>, com **45$/dia.**
+
+--- EXEMPLO 4: REV-PJ CBO 15/06/2026 (CAMPANHA CBO — TERMINOLOGIA E FORMATO) ---
+
+INPUT DO GESTOR: "Pausamos o AD 3 - CP Dívida de CG 400k na campanha CBO e adicionamos AD 19 e AD 19.1 com 30$/dia-útil"
+
+OUTPUT CORRETO:
+[Observe: usa "campanha CBO" (nunca "não-ABO"), valores com "em CBO", sem mencionar valor total do conjunto]
+
+#### **Data da Otimização: 15/06/2026**
+**Alterações:**
+*   **[REV-PJ]** [Meta Ads] Na campanha CBO, **pausamos** o <u>"AD 3 - CP Dívida de CG 400k"</u> e **adicionamos** os anúncios:
+    *   <u>"AD 19 - Dívida de R$997K por menos de R$19K"</u>;
+    *   <u>"AD 19.1 - Dívida de R$997K por menos de R$19K var 1"</u>,
+    com **30$/dia-útil** em CBO.
 
 ═══════════════════════════════════════════
 INSTRUÇÕES FINAIS
