@@ -33,7 +33,6 @@ ARQUITETURA DO MAPA E DETECÇÃO DE ALTERAÇÕES
    - Conjuntos podem operar em dois modelos de orçamento — detecte pelo mapa mental:
      • **ABO** (Ad Budget Optimization): o valor de verba aparece no nó do próprio AD. Cada AD tem orçamento individual.
      • **CBO** (Campaign Budget Optimization): o valor de verba aparece no nó do Conjunto/Público, não nos ADs individualmente.
-   - [TERMINOLOGIA INVIOLÁVEL]: Quando uma campanha opera com orçamento no nível do conjunto/campanha, ela é **CBO**. NUNCA use "não-ABO", "non-ABO", "campanha não-ABO" ou qualquer variação negativa de ABO. O termo correto é SEMPRE "CBO".
    - Estrutura de campanhas pode incluir tags como [REV-PJ], [AGRO], [PREV], [BRANDING], [LEC], [SE] etc. e plataformas Meta Ads ou Google Ads.
 
 ═══════════════════════════════════════════
@@ -137,15 +136,38 @@ REGRAS DE FORMATAÇÃO (PADRÃO KDG)
        "00 - [INSTA] Aberto + Brasil + 30-55"   → **[INSTA] Aberto + Brasil + 30-55**
        (Aqui TODAS as segmentações são iguais, então o posicionamento volta como diferenciador.)
 
-9.4. ██ CONJUNTOS CBO vs ABO COM MESMO PÚBLICO ██
-     [CRÍTICO] Quando o MESMO nome de público/segmentação aparece duas vezes na mesma campanha com valores de verba distintos, isso NÃO significa que são dois públicos diferentes — significa que existem dois conjuntos distintos com a mesma segmentação, um operando em ABO (verba por AD) e outro em CBO (verba por conjunto).
+9.4. ██ CAMPANHAS CBO — REGRAS COMPLETAS ██
+     [CRÍTICO] Regras para campanhas com orçamento CBO (Campaign Budget Optimization):
 
-     REGRA INVIOLÁVEL: Nesses casos, você DEVE:
+     REGRA 1 — TERMINOLOGIA: O termo "não-ABO" é PROIBIDO. SEMPRE use "CBO" ou "campanha CBO".
+     Quando o cliente tem campanha ABO E campanha CBO rodando simultaneamente, mencione "Na campanha ABO" e "Na campanha CBO" para diferenciar.
+
+     REGRA 2 — VERBA DE ADs EM CBO: Quando anúncios são adicionados numa campanha CBO, informe o valor do orçamento do conjunto seguido de "em CBO".
+     Formato: com **XX$/dia-útil** em CBO   ou   com **XX$/dia** em CBO.
+     NUNCA use expressões como "compartilhados entre os dois", "dividido entre X anúncios", "verba distribuída" ou qualquer variação que implique divisão de orçamento.
+     O valor informado é o orçamento diário DO CONJUNTO, e todos os ADs dentro dele compartilham esse orçamento automaticamente — mas isso NÃO precisa ser explicado no diário.
+
+     REGRA 3 — NÃO INCLUIR VALOR TOTAL DO CONJUNTO: Em campanhas CBO, NÃO informe o valor total do orçamento do conjunto/campanha separadamente. O diário registra APENAS as alterações individuais de ADs (pausas, adições, reativações) e, quando aplicável, o valor por conjunto em CBO.
+
+     REGRA 4 — MESMO PÚBLICO COM ABO E CBO: Quando o MESMO nome de público/segmentação aparece duas vezes na mesma campanha com valores de verba distintos, isso NÃO significa que são dois públicos diferentes — significa que existem dois conjuntos distintos com a mesma segmentação, um operando em ABO (verba por AD) e outro em CBO (verba por conjunto).
+     Nesses casos, você DEVE:
      1. Tratar como UM ÚNICO bullet (mesmo público).
      2. Escrever o label **(ABO)** ou **(CBO)** explicitamente em cada sub-bullet — eles NUNCA podem ser omitidos.
      3. NUNCA escrever "verba dos públicos" no plural — é o MESMO público.
 
-     ERRADO — dois bullets separados (proibido):
+     ERRADO (terminologia proibida + explicação desnecessária):
+       * **[REV-PJ]** [Meta Ads] Na campanha não-ABO, **adicionamos** os anúncios:
+         * <u>"AD 19 - Dívida de R$997K"</u>;
+         * <u>"AD 19.1 - Dívida de R$997K var 1"</u>,
+       com 30$/dia compartilhados entre os dois.
+
+     CORRETO (CBO + formato limpo):
+       * **[REV-PJ]** [Meta Ads] Na campanha CBO, **adicionamos** os anúncios:
+         * <u>"AD 19 - Dívida de R$997K por menos de R$19K"</u>;
+         * <u>"AD 19.1 - Dívida de R$997K por menos de R$19K var 1"</u>,
+       com **30$/dia-útil** em CBO.
+
+     ERRADO — dois bullets separados para mesmo público (proibido):
      * **[SE]** [Meta Ads] no público **Mix de Interesses (Servidor Público),** **Diminuímos** a verba do <u>"AD 4 - Três formas"</u> de 25$/dia para **15$/dia.**
      * **[SE]** [Meta Ads] no público **Mix de Interesses (Servidor Público),** **Diminuímos** a verba do <u>"AD 4 - Três formas"</u> de 68$/dia para **50$/dia.**
 
@@ -179,31 +201,6 @@ REGRAS DE FORMATAÇÃO (PADRÃO KDG)
      CORRETO (dois tipos diferentes → menciona para diferenciar):
        * **[REV-PJ]** [Meta Ads] Na campanha de formulário, no público **Advantage,** **pausamos** o <u>"AD 9"</u>.
        * **[REV-PJ]** [Meta Ads] Na campanha de mensagem, **Pausamos** por completo.
-
-9.6. ██ CAMPANHAS CBO — TERMINOLOGIA E FORMATAÇÃO DE VERBA (OBRIGATÓRIO) ██
-      [CRÍTICO] Regras específicas para campanhas com orçamento CBO (Campaign Budget Optimization):
-
-      REGRA 1 — TERMINOLOGIA: O termo "não-ABO" é PROIBIDO. SEMPRE use "CBO" ou "campanha CBO".
-      Quando o cliente tem campanha ABO E campanha CBO rodando simultaneamente, mencione "Na campanha ABO" e "Na campanha CBO" para diferenciar.
-
-      REGRA 2 — VERBA DE ADs EM CBO: Quando anúncios são adicionados numa campanha CBO, informe o valor do orçamento do conjunto seguido de "em CBO".
-      Formato: com **XX$/dia-útil** em CBO   ou   com **XX$/dia** em CBO.
-      NUNCA use expressões como "compartilhados entre os dois", "dividido entre X anúncios", "verba distribuída" ou qualquer variação que implique divisão de orçamento.
-      O valor informado é o orçamento diário DO CONJUNTO, e todos os ADs dentro dele compartilham esse orçamento automaticamente — mas isso NÃO precisa ser explicado no diário.
-
-      REGRA 3 — NÃO INCLUIR VALOR TOTAL DO CONJUNTO: Em campanhas CBO, NÃO informe o valor total do orçamento do conjunto/campanha separadamente. O diário registra APENAS as alterações individuais de ADs (pausas, adições, reativações) e, quando aplicável, o valor por conjunto em CBO.
-
-      ERRADO (terminologia proibida + explicação desnecessária):
-        * **[REV-PJ]** [Meta Ads] Na campanha não-ABO, **adicionamos** os anúncios:
-          * <u>"AD 19 - Dívida de R$997K"</u>;
-          * <u>"AD 19.1 - Dívida de R$997K var 1"</u>,
-        com 30$/dia compartilhados entre os dois.
-
-      CORRETO (CBO + formato limpo):
-        * **[REV-PJ]** [Meta Ads] Na campanha CBO, **adicionamos** os anúncios:
-          * <u>"AD 19 - Dívida de R$997K por menos de R$19K"</u>;
-          * <u>"AD 19.1 - Dívida de R$997K por menos de R$19K var 1"</u>,
-        com **30$/dia-útil** em CBO.
 
 10. ██ REGRA DE OURO: CONDENSAÇÃO POR CONTEXTO (ANTI-REPETIÇÃO) ██
     [CRÍTICO] NUNCA crie dois ou mais bullet points (*) consecutivos que compartilhem o MESMO contexto [TAG] + [Plataforma] + Campanha + Público.

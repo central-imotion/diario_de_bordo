@@ -389,9 +389,7 @@ Data da otimização: ${today}
 
       mergePrompt += `\n\n[INSTRUÇÃO FINAL]: Compare as duas extrações (ANTES vs DEPOIS) e gere o Diário de Bordo completo das alterações no formato KDG.
 
-[IMPORTANTE]:
-1. Mantenha a etapa dentro da tag <pensamento> concisa (no máximo 40 linhas), listando as diferenças de forma objetiva, para garantir que todo o Diário de Bordo seja gerado no final sem truncar.
-2. O merge deve ser feito com base nas extrações textuais acima. Identifique pausas, adições, alterações de verba, etc.`;
+[SOBRE O <pensamento>]: As extrações visuais ANTES e DEPOIS já estão acima — as etapas de OCR foram concluídas nas Fases 1 e 2. Dentro da tag <pensamento>, pule as etapas de transcrição visual e faça APENAS: (1) listar as alterações do texto do gestor, se houver; (2) comparar as extrações e mapear diferenças objetivamente (pausas, adições, alterações de verba); (3) planejar a fusão com o texto do gestor. Seja conciso — máximo 25 linhas.`;
 
       const mergeResponse = await fetch('/api/anthropic/v1/messages', {
         method: 'POST',
